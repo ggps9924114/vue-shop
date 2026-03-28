@@ -12,6 +12,7 @@ import {
   NFormItem,
   NInputNumber,
   NUpload,
+  NBadge,
 } from 'naive-ui'
 // import { Discount } from '@vicons/tabler'
 import HomeBanner from './HomeBanner.vue'
@@ -19,15 +20,14 @@ import SideMenu from './SideMenu.vue'
 const userStore = useUserStore()
 const productStore = useProductStore()
 const cartStore = useCartStore()
-
 const dialog = useDialog()
 const message = useMessage()
-
+// 購物車開關
+const showCart = ref(false)
 // 上傳成功的照片預覽開關
 const showImagePreview = ref(false)
 // 上傳成功的照片網址
 const previewImageUrl = ref('')
-
 // 上傳照片功能
 const handleUploadChange = (data) => {
   if (!data.fileList || data.fileList.length === 0) {
@@ -104,11 +104,14 @@ const handleAddToCart = (item) => {
       <nav class="bg-white shadow-sm mb-8">
         <div class="container mb-2 px-4 mx-auto h-16 flex justify-between items-center">
           <p>登入成功，歡迎{{ userStore.account }}</p>
-          <div class="flex gap-2">
+          <div class="flex gap-2 items-center">
             <n-button type="error" @click="userStore.logOut">登出</n-button>
             <n-button type="primary" size="medium" @click.prevent="productStore.openAddModal"
               >新增商品</n-button
             >
+            <n-badge :value="cartStore.totalQuantity" max="99">
+              <n-button type="primary" size="medium" @click="showCart = true">購物車</n-button>
+            </n-badge>
           </div>
         </div>
       </nav>
