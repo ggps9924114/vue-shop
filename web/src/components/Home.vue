@@ -17,6 +17,8 @@ import {
 // import { Discount } from '@vicons/tabler'
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
+import CartDrawer from './CartDrawer.vue'
+
 const userStore = useUserStore()
 const productStore = useProductStore()
 const cartStore = useCartStore()
@@ -97,6 +99,8 @@ const handleAddToCart = (item) => {
 </script>
 
 <template>
+  <!-- 購物車畫面 -->
+  <CartDrawer v-model:show="showCart"></CartDrawer>
   <SideMenu>
     <!-- 頂端橫幅 -->
     <div class="min-h-screen bg-slate-200">
@@ -115,6 +119,7 @@ const handleAddToCart = (item) => {
           </div>
         </div>
       </nav>
+
       <main class="container mx-auto px-6 pb-12">
         <!-- 輪播圖 -->
         <section class="mb-10">
@@ -237,7 +242,7 @@ const handleAddToCart = (item) => {
                     type="primary"
                     class="col-span-2"
                     @click="handleAddToCart(item)"
-                    >直接購買</n-button
+                    >加入購物車</n-button
                   >
                 </div>
               </div>
