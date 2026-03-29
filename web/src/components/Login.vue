@@ -73,6 +73,13 @@ const handleSignup = () => {
   password.value = ''
   isRegistered.value = false
 }
+
+// 驗證規則
+const rule = {
+  required: true,
+  message: '此欄位為必填',
+  trigger: 'blur',
+}
 </script>
 <template>
   <!-- 登入外框背景 -->

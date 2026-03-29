@@ -25,7 +25,6 @@ const themeColor = {
         <login v-if="!userStore.isLogin"></login>
         <home v-else></home>
 
-        <router-view />
       </n-message-provider>
     </n-dialog-provider>
   </n-config-provider>
