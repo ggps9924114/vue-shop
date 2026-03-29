@@ -11,7 +11,12 @@ export default {
         sans: ['"Microsoft JhengHei"', 'PingFang TC', 'sans-serif'],
       },
       colors: {
-        navy: '#001f3f',
+        navy: {
+          DEFAULT: '#0d1b2a', // bg-navy
+          light: '#1b2e45', // bg-navy-light（hover 用）
+          dark: '#060d14', // bg-navy-dark（pressed 用）
+        },
+        cream: '#f8f9fa', // bg-cream（淺色背景）
       },
     },
   },

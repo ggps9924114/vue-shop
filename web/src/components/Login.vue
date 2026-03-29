@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useUserStore } from '@/store/useUserStore'
 import { NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
+import Login_shopping from '@/assets/Login_shopping.png'
 
 const router = useRouter()
 const message = useMessage()
@@ -94,9 +95,14 @@ const rule = {
       class="flex w-full lg:w-[50vw] lg:h-[50vh] min-w-[800px] min-h-[500px] bg-white rounded-2xl shadow-xl overflow-hidden"
     >
       <!-- 左邊區塊 -->
-      <div
-        class="hidden lg:flex lg:w-1/2 flex-col p-12 justify-between bg-slate-900 text-white"
-      ></div>
+      <div class="hidden lg:flex lg:w-1/2 flex-col p-12 justify-between bg-slate-900 text-white">
+        <h1 class="text-2xl font-bold tracking-wider">購物網站</h1>
+        <img :src="Login_shopping" class="object-cover" />
+        <div class="">
+          <p class="text-2xl font-bold tracking-[0.25em] leading-[1.5]">找商品?</p>
+          <p class="mt-2 text-slate-400 text-sm">就從這裡出發探索最好的商品吧！</p>
+        </div>
+      </div>
       <!-- 右邊區塊 -->
       <div class="flex flex-col justify-center w-full lg:w-1/2 p-10 bg-white">
         <div class="w-full max-w-[380px] mx-auto">
