@@ -2,22 +2,26 @@
 import { ref } from 'vue'
 import { useUserStore } from '@/store/useUserStore'
 import { NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const message = useMessage()
 
 // user的狀態管理
 const userStore = useUserStore()
-// 登入帳號
-const account = ref()
-// 登入密碼
-const password = ref()
+
+const formData = ref({
+  // 登入帳號
+  account: '',
+  // 登入密碼
+  password: '',
+})
 // 註冊
 const isRegistered = ref(false)
 // 切換註冊或登入模式
 const toggleMode = () => {
   isRegistered.value = !isRegistered.value
-  account.value = ''
-  password.value = ''
+  formData.value = { account: '', password: '' }
 }
 // 登入功能
 const login = () => {
@@ -32,45 +36,46 @@ const login = () => {
   const savedUser = JSON.parse(userList)
   // 開始比對本地資料是否有這組帳號
   const foundUser = savedUser.find(
-    (savedUser) => account.value === savedUser.acc && password.value === savedUser.pwd,
+    (savedUser) =>
+      formData.value.account === savedUser.acc && formData.value.password === savedUser.pwd,
   )
 
   if (foundUser) {
     message.success('登入成功！')
-    userStore.isLogin = true // 切換畫面
-    userStore.setLoginSuccess(account.value)
+    userStore.setLoginSuccess(formData.value.account)
+    router.push({ name: 'Home' })
   } else {
     message.error('帳號或密碼錯誤')
   }
 }
+// 切換登入或註冊畫面
 const toggleRegistered = () => {
   isRegistered.value = true
-  account.value = ''
-  password.value = ''
+  formData.value = { account: '', password: '' }
 }
 // 註冊功能：儲存本地註冊的使用者資料
 const handleSignup = () => {
-  if (!account.value || !password.value) {
+  if (!formData.value.account || !formData.value.password) {
     message.error('請先輸入帳密後再註冊')
     return
   }
   // 1. 先從本地資料確認是否有這組帳號，如果沒有就給空陣列[]
   const userList = JSON.parse(localStorage.getItem('registeredUser')) || []
   // 2. 判斷帳號是否被重複註冊，如果已經註冊則結束不再跑push
-  const isAccountUsed = userList.some((savedUser) => savedUser.acc === account.value)
+  const isAccountUsed = userList.some((savedUser) => savedUser.acc === formData.value.account)
   if (isAccountUsed) {
     message.warning('帳號已有人註冊囉，換一個吧~')
     return
   }
   // 3. 註冊帳號跟密碼的資料
-  const signupData = { acc: account.value, pwd: password.value }
+  const signupData = { acc: formData.value.account, pwd: formData.value.password }
   // 4. 如果沒有找到帳號就新增這組帳密進去
   userList.push(signupData)
   // 5. 將註冊資料存進本地
   localStorage.setItem('registeredUser', JSON.stringify(userList))
   message.success('註冊成功')
-  account.value = ''
-  password.value = ''
+  formData.value.account = ''
+  formData.value.password = ''
   isRegistered.value = false
 }
 
@@ -111,13 +116,13 @@ const rule = {
                 <p class="mt-2 text-slate-400">請輸入帳號密碼，還沒有帳號請先進行註冊</p>
               </div>
               <n-form-item label="帳號：" :rule="rule">
-                <n-input v-model:value="account" placeholder="請輸入帳號" />
+                <n-input v-model:value="formData.account" placeholder="請輸入帳號" />
               </n-form-item>
               <n-form-item label="密碼：" :rule="rule">
                 <n-input
                   type="password"
                   show-password-on="mousedown"
-                  v-model:value="password"
+                  v-model:value="formData.password"
                   placeholder="請輸入密碼"
                 />
               </n-form-item>
@@ -137,13 +142,13 @@ const rule = {
                 <p class="mt-2 text-slate-400">如果你已經有帳號，請返回直接登入吧！</p>
               </div>
               <n-form-item label="帳號：" :rule="rule">
-                <n-input v-model:value="account" placeholder="請輸入帳號" />
+                <n-input v-model:value="formData.account" placeholder="請輸入帳號" />
               </n-form-item>
               <n-form-item label="密碼：" :rule="rule">
                 <n-input
                   type="password"
                   show-password-on="mousedown"
-                  v-model:value="password"
+                  v-model:value="formData.password"
                   placeholder="請輸入密碼"
                 />
               </n-form-item>
