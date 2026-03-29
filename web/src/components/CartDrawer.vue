@@ -1,9 +1,9 @@
 <script setup>
 import { useCartStore } from '@/store'
-import { NDrawer, NDrawerContent, NEmpty, NButton, useMessage } from 'naive-ui'
-
+import { NDrawer, NDrawerContent, NEmpty, NButton, useMessage, useDialog } from 'naive-ui'
 // defineProps 和 defineEmits 在 script setup 裡不需要 import，直接用
 const message = useMessage()
+const dialog = useDialog()
 const cartStore = useCartStore()
 
 const props = defineProps({
@@ -20,6 +20,20 @@ const handleCheckout = () => {
   message.success('購物車訂單已送出')
   cartStore.clearCart()
   emit('update:modelValue', false)
+}
+
+// 刪除確認按鈕
+const headleRemoveFromCart = (item) => {
+  dialog.warning({
+    title: '確認刪除',
+    content: `確認要將${item.title}從購物車刪除嗎?`,
+    positiveText: '確認刪除',
+    negativeText: '再想想',
+    onPositiveClick: () => {
+      cartStore.removeFromCart(item.id)
+      message.success(`已將${item.title}成功從購物車刪除`)
+    },
+  })
 }
 </script>
 
@@ -71,7 +85,7 @@ const handleCheckout = () => {
 
           <div class="flex flex-col items-end gap-2 flex-shrink-0">
             <p class="font-bold text-sm">$ {{ item.price * item.quantity }}</p>
-            <n-button size="tiny" type="error" ghost @click="cartStore.removeFromCart(item.id)"
+            <n-button size="tiny" type="error" ghost @click="headleRemoveFromCart(item)"
               >刪除</n-button
             >
           </div>

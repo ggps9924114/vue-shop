@@ -5,7 +5,7 @@ import { ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
   // 判斷是否登入，若登入成功切換到電商網站
-  const isLogin = ref(false)
+  const isLogin = ref(true)
 
   const account = ref('')
 
