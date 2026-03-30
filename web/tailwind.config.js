@@ -10,11 +10,12 @@ export default {
       fontFamily: {
         sans: ['"Microsoft JhengHei"', 'PingFang TC', 'sans-serif'],
       },
+      // class用的自定義顏色
       colors: {
         navy: {
-          DEFAULT: '#0d1b2a', // bg-navy
-          light: '#1b2e45', // bg-navy-light（hover 用）
-          dark: '#060d14', // bg-navy-dark（pressed 用）
+          DEFAULT: '#2d3a5e', // bg-navy
+          light: '#3a4a78', // bg-navy-light
+          dark: '#1e2740', // bg-navy-dark
         },
         cream: '#f8f9fa', // bg-cream（淺色背景）
       },

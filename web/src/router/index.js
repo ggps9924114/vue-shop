@@ -10,12 +10,12 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    Component: Login,
+    component: Login,
   },
   {
     path: '/',
     name: 'Home',
-    Component: Home,
+    component: Home,
     // mate 是路由附加資訊，需登入才能用
     meta: { requiresAuth: true },
   },
@@ -28,10 +28,9 @@ const router = createRouter({
   routes,
 })
 
-
-  // to   > 要進的路由
-  // from > 從哪個路由來
-  // next > 函數，決定要去哪裡
+// to   > 要進的路由
+// from > 從哪個路由來
+// next > 函數，決定要去哪裡
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   // 該頁面需要登入若沒有登入，就強制跳轉登入頁面

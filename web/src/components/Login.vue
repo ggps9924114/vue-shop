@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useUserStore } from '@/store/useUserStore'
 import { NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
-import Login_shopping from '@/assets/Login_shopping.png'
+import { sign_in, sign_up } from '@/assets'
+import { LetterD } from '@vicons/tabler'
 
 const router = useRouter()
 const message = useMessage()
@@ -11,6 +12,7 @@ const message = useMessage()
 // user的狀態管理
 const userStore = useUserStore()
 
+// 登入表單管理
 const formData = ref({
   // 登入帳號
   account: '',
@@ -86,6 +88,25 @@ const rule = {
   message: '此欄位為必填',
   trigger: 'blur',
 }
+
+// 登入頁面左側區塊
+const leftPanel = computed(() => {
+  if (!isRegistered.value) {
+    return {
+      title: '準備好就登入開始購物吧！',
+      img: sign_in,
+      heading: '找商品?',
+      desc: '就從這裡出發探索最好的商品吧！',
+    }
+  } else {
+    return {
+      title: '先成為會員吧！',
+      img: sign_up,
+      heading: '沒帳號?',
+      desc: '在沒有會員前一切都免談！',
+    }
+  }
+})
 </script>
 <template>
   <!-- 登入外框背景 -->
@@ -95,13 +116,27 @@ const rule = {
       class="flex w-full lg:w-[50vw] lg:h-[50vh] min-w-[800px] min-h-[500px] bg-white rounded-2xl shadow-xl overflow-hidden"
     >
       <!-- 左邊區塊 -->
-      <div class="hidden lg:flex lg:w-1/2 flex-col p-12 justify-between bg-slate-900 text-white">
-        <h1 class="text-2xl font-bold tracking-wider">購物網站</h1>
-        <img :src="Login_shopping" class="object-cover" />
-        <div class="">
-          <p class="text-2xl font-bold tracking-[0.25em] leading-[1.5]">找商品?</p>
-          <p class="mt-2 text-slate-400 text-sm">就從這裡出發探索最好的商品吧！</p>
-        </div>
+      <div class="hidden lg:flex lg:w-1/2 flex-col p-12 justify-between bg-navy text-white">
+        <Transition
+          enter-active-class="transition duration-400 ease-out"
+          enter-from-class="opacity-0 transform -translate-x-4"
+          enter-to-class="opacity-100 transform translate-x-0"
+          leave-active-class="transition duration-300 ease-in"
+          leave-from-class="opacity-100 transform translate-x-0"
+          leave-to-class="opacity-0 transform -translate-x-4"
+          mode="out-in"
+        >
+          <div :key="isRegistered" class="flex flex-col justify-between h-full">
+            <h1 class="text-2xl font-bold tracking-wider">{{ leftPanel.title }}</h1>
+            <img :src="leftPanel.img" class="object-cover" />
+            <div class="">
+              <p class="text-2xl font-bold tracking-[0.25em] leading-[1.5]">
+                {{ leftPanel.heading }}
+              </p>
+              <p class="mt-2 text-white/60 text-sm tracking-[0.3em]">{{ leftPanel.desc }}</p>
+            </div>
+          </div>
+        </Transition>
       </div>
       <!-- 右邊區塊 -->
       <div class="flex flex-col justify-center w-full lg:w-1/2 p-10 bg-white">
@@ -116,15 +151,16 @@ const rule = {
             leave-to-class="opacity-0 transform duration-200 translate-x-10"
             mode="out-in"
           >
-            <n-form v-if="!isRegistered" @submit.prevent="login" @click="isRegistered = false">
+            <!-- 登入畫面 -->
+            <n-form v-if="!isRegistered" @submit.prevent="login">
               <div class="mb-8">
                 <h2 class="text-3xl font-bold text-slate-800">登入</h2>
                 <p class="mt-2 text-slate-400">請輸入帳號密碼，還沒有帳號請先進行註冊</p>
               </div>
-              <n-form-item label="帳號：" :rule="rule">
+              <n-form-item label="帳號：" path="account" :rule="rule">
                 <n-input v-model:value="formData.account" placeholder="請輸入帳號" />
               </n-form-item>
-              <n-form-item label="密碼：" :rule="rule">
+              <n-form-item label="密碼：" path="password" :rule="rule">
                 <n-input
                   type="password"
                   show-password-on="mousedown"
@@ -141,16 +177,15 @@ const rule = {
             </n-form>
 
             <!-- 註冊畫面 -->
-
             <n-form v-else @submit.prevent="handleSignup">
               <div class="mb-8">
                 <h2 class="text-3xl font-bold text-slate-800">註冊</h2>
                 <p class="mt-2 text-slate-400">如果你已經有帳號，請返回直接登入吧！</p>
               </div>
-              <n-form-item label="帳號：" :rule="rule">
+              <n-form-item label="帳號：" path="account" :rule="rule">
                 <n-input v-model:value="formData.account" placeholder="請輸入帳號" />
               </n-form-item>
-              <n-form-item label="密碼：" :rule="rule">
+              <n-form-item label="密碼：" path="password" :rule="rule">
                 <n-input
                   type="password"
                   show-password-on="mousedown"
@@ -167,7 +202,6 @@ const rule = {
         </div>
       </div>
     </div>
-    <div class=""></div>
   </div>
   <!-- 登入畫面 -->
 </template>
