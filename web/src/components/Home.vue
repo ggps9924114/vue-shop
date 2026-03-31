@@ -18,6 +18,7 @@ import {
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
 import CartDrawer from './CartDrawer.vue'
+import { Users } from '@vicons/tabler'
 
 const userStore = useUserStore()
 const productStore = useProductStore()
@@ -110,7 +111,11 @@ const handleAddToCart = (item) => {
           <p>登入成功，歡迎{{ userStore.account }}</p>
           <div class="flex gap-2 items-center">
             <n-button type="error" @click="userStore.logOut">登出</n-button>
-            <n-button type="primary" size="medium" @click.prevent="productStore.openAddModal"
+            <n-button
+              v-if="userStore.isAdmin"
+              type="primary"
+              size="medium"
+              @click.prevent="productStore.openAddModal"
               >新增商品</n-button
             >
             <n-badge :value="cartStore.totalQuantity" max="99">
@@ -228,13 +233,19 @@ const handleAddToCart = (item) => {
 
                 <div class="grid grid-cols-2 gap-2">
                   <n-button
+                    v-if="userStore.isAdmin"
                     size="small"
                     type="primary"
                     ghost
                     @click="productStore.editProduct(item)"
                     >編輯</n-button
                   >
-                  <n-button size="small" type="error" ghost @click="handleProductDel(item)"
+                  <n-button
+                    v-if="userStore.isAdmin"
+                    size="small"
+                    type="error"
+                    ghost
+                    @click="handleProductDel(item)"
                     >刪除</n-button
                   >
                   <n-button

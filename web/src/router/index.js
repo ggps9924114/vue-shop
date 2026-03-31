@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/store'
 
-// 匯入頁面的原件，用軟加載，User 進到該頁面時才會加載
+// 匯入頁面的原件，用懶加載，User 進到該頁面時才會加載
 const Login = () => import('@/components/Login.vue')
 const Home = () => import('@/components/Home.vue')
-
+const UserProfile = () => import('@/components/UserProfile.vue')
 // 定義路由：網址對應到哪個元件
 const routes = [
   {
@@ -16,6 +16,13 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+    // mate 是路由附加資訊，需登入才能用
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/profile',
+    name: 'UserProfile',
+    component: UserProfile,
     // mate 是路由附加資訊，需登入才能用
     meta: { requiresAuth: true },
   },

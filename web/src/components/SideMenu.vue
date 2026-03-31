@@ -10,6 +10,21 @@ import {
 import { NIcon, NMenu, NLayoutContent, NSpace, NSwitch, NLayout, NLayoutSider } from 'naive-ui'
 import { h, ref } from 'vue'
 import { Edit } from '@vicons/tabler'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const handleMenuSelect = (key) => {
+  // 對照表:用來對應每個key的router name
+  const routeMap = {
+    home: { name: 'Home' },
+    editPersonalInfo: { name: 'UserProfile' },
+  }
+  // 用點到的key去抓是否存在，如果存在就去找並跳轉
+  if (routeMap[key]) {
+    router.push(routeMap[key])
+  }
+}
+
 // NMenu一定要寫接收的渲染函數
 function renderIcon(icon) {
   // 返回一個函數，選單在需要畫圖示時執行
@@ -50,7 +65,7 @@ const inverted = ref(false)
         show-trigger
         :inverted="inverted"
       >
-        <n-menu :inverted="inverted" :options="menuOptions" />
+        <n-menu :inverted="inverted" :options="menuOptions" @update:value="handleMenuSelect" />
       </n-layout-sider>
 
       <n-layout-content content-style="padding: 24px;" :native-scrollbar="false" scrollable>
@@ -58,8 +73,6 @@ const inverted = ref(false)
       </n-layout-content>
     </n-layout>
   </div>
-
-  
 </template>
 
 <style scoped></style>
