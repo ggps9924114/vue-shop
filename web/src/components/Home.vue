@@ -18,8 +18,6 @@ import {
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
 import CartDrawer from './CartDrawer.vue'
-import { Users } from '@vicons/tabler'
-
 const userStore = useUserStore()
 const productStore = useProductStore()
 const cartStore = useCartStore()
@@ -96,6 +94,17 @@ const handleAddToCart = (item) => {
   console.log()
 
   message.success(`已經將${item.title}放入購物車`)
+}
+// 商品詳情開關
+const showProductDetail = ref(false)
+// 存放點到商品的資訊
+const selectedProduct = ref(null)
+// 點商品顯示資訊
+const handleShowDetail = (item) => {
+  // 將點到的商品存起來
+  selectedProduct.value = item
+  // 顯示商品詳情內容
+  showProductDetail.value = true
 }
 </script>
 
@@ -215,7 +224,8 @@ const handleAddToCart = (item) => {
           <div v-for="item in productStore.products" :key="item.id" class="group">
             <n-card
               content-style="padding: 0;"
-              class="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow duration-300"
+              class="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+              @click="handleShowDetail(item)"
             >
               <div class="h-48 bg-slate-200 overflow-hidden">
                 <img
@@ -262,6 +272,52 @@ const handleAddToCart = (item) => {
         </div>
       </main>
     </div>
+    <!-- 點擊後的商品詳情內容 -->
+    <n-modal v-model:show="showProductDetail">
+      <n-card
+        style="width: 90vw; max-width: 1600px ; height: 90vh; max-height: 1000px;"
+        :bordered="false"
+        role="dialog"
+        aria-modal="true"
+        class="rounded-2xl shadow-xl overflow-hidden"
+      >
+        <!-- 如果 selectedProduct 有資料才顯示 -->
+        <div v-if="selectedProduct" class="flex flex-col gap-6">
+          <!-- 商品資訊內容 -->
+          <div class="h-[30vh] bg-slate-100 overflow-hidden rounded-xl">
+            <img :src="selectedProduct.imageUrl" class="w-full h-full object-cover" />
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="flex justify-between items-start">
+              <h2 class="text-2xl font-bold text-slate-800">{{ selectedProduct.title }}</h2>
+              <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full">
+                {{ selectedProduct.category }}
+              </span>
+            </div>
+            <p class="text-3xl font-bold text-navy">$ {{ selectedProduct.price }}</p>
+            <p class="text-slate-500 leading-relaxed">{{ selectedProduct.description }}</p>
+            <p class="text-sm text-slate-400">
+              庫存：
+              <span :class="selectedProduct.stock > 0 ? 'text-green-500' : 'text-red-500'">
+                {{ selectedProduct.stock > 0 ? `${selectedProduct.stock} 件` : '已售完' }}
+              </span>
+            </p>
+          </div>
+          <!-- 底部按鈕 -->
+          <div class="flex gap-3">
+            <n-button
+              type="primary"
+              class="flex-1"
+              :disabled="selectedProduct.stock === 0"
+              @click="(handleAddToCart(selectedProduct), (showProductDetail = false))"
+            >
+              {{ selectedProduct.stock > 0 ? '加入購物車' : '已售完' }}
+            </n-button>
+            <n-button @click="showProductDetail = false">關閉</n-button>
+          </div>
+        </div>
+      </n-card>
+    </n-modal>
   </SideMenu>
 </template>
 <style scoped>

@@ -18,14 +18,18 @@ const userStore = useUserStore()
               <!-- 頭像區塊 -->
               <div
                 class="w-16 h-16 rounded-full bg-navy flex items-center justify-center text-white text-2xl font-bold"
+                :class="userStore.isAdmin ? '' : 'bg-navy-light'"
               >
                 {{ userStore.account?.charAt(0).toUpperCase() }}
               </div>
               <div>
                 <p class="font-bold text-lg">{{ userStore.account }}</p>
-                <p class="text-slate-400 text-sm">
-                  {{ userStore.isAdmin ? '管理員' : '一般用戶' }}
-                </p>
+                <span
+                  class="text-xs px-2 p-1 rounded-full"
+                  :class="userStore.isAdmin ? 'bg-navy text-white' : 'bg-slate-200 text-slate-600'"
+                >
+                  {{ userStore.isAdmin ? '管理員' : '一般用戶' }}</span
+                >
               </div>
             </div>
           </div>
