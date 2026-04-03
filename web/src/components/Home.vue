@@ -91,28 +91,26 @@ const handleProductDel = (item) => {
 
 const handleAddToCart = (item) => {
   cartStore.addToCart(item)
-  console.log()
-
   message.success(`已經將${item.title}放入購物車`)
 }
 // 商品詳情開關
 const showProductDetail = ref(false)
 // 存放點到商品的資訊
-const selectedProduct = ref(null)
+const saveSelectedProduct = ref(null)
 // 點商品顯示資訊
 const handleShowDetail = (item) => {
   // 將點到的商品存起來
-  selectedProduct.value = item
+  saveSelectedProduct.value = item
   modalQuantity.value = 1
   // 顯示商品詳情內容
   showProductDetail.value = true
 }
-// 詳情modal數量選擇器
+// 詳情Modal的數量
 const modalQuantity = ref(1)
 
 // 詳情數量增加且不能超過庫存
 const increaseQty = () => {
-  if (modalQuantity.value < selectedProduct.value.stock) {
+  if (modalQuantity.value < saveSelectedProduct.value.stock) {
     modalQuantity.value++
   }
 }
@@ -122,6 +120,16 @@ const decreaseQty = () => {
   if (modalQuantity.value > 1) {
     modalQuantity.value--
   }
+}
+
+const handleAddToCartWithQty = () => {
+  for (let i = 0; i < modalQuantity.value; i++) {
+    cartStore.addToCart(saveSelectedProduct.value)
+  }
+  message.success(
+    `已將 ${modalQuantity.value} 件「${saveSelectedProduct.value.title}」加入購物車！`,
+  )
+  showProductDetail.value = false
 }
 </script>
 
@@ -264,7 +272,7 @@ const decreaseQty = () => {
                     size="small"
                     type="primary"
                     ghost
-                    @click="productStore.editProduct(item)"
+                    @click.stop="productStore.editProduct(item)"
                     >編輯</n-button
                   >
                   <n-button
@@ -272,14 +280,14 @@ const decreaseQty = () => {
                     size="small"
                     type="error"
                     ghost
-                    @click="handleProductDel(item)"
+                    @click.stop="handleProductDel(item)"
                     >刪除</n-button
                   >
                   <n-button
                     size="small"
                     type="primary"
                     class="col-span-2"
-                    @click="handleAddToCart(item)"
+                    @click.stop="handleAddToCart(item)"
                     >加入購物車</n-button
                   >
                 </div>
@@ -299,22 +307,24 @@ const decreaseQty = () => {
         class="rounded-2xl shadow-xl overflow-hidden"
         content-style="padding: 0;"
       >
-        <div v-if="selectedProduct" class="flex">
+        <div v-if="saveSelectedProduct" class="flex">
           <!-- 左商品圖片 -->
           <div class="w-2/5 min-h-[400px] flex-shrink-0 overflow-hidden">
-            <img :src="selectedProduct.imageUrl" class="w-full h-full object-cover" />
+            <img :src="saveSelectedProduct.imageUrl" class="w-full h-full object-cover" />
           </div>
 
           <!-- 右商品資訊 -->
           <div class="flex-1 p-6 flex flex-col gap-4">
             <div class="flex items-center gap-3 flex-wrap">
-              <h2 class="text-2xl font-bold text-slate-800">{{ selectedProduct.title }}</h2>
+              <h2 class="text-2xl font-bold text-slate-800">{{ saveSelectedProduct.title }}</h2>
               <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full">
-                {{ selectedProduct.category }}
+                {{ saveSelectedProduct.category }}
               </span>
             </div>
-            <p class="text-3xl font-bold text-navy">$ {{ selectedProduct.price }}</p>
-            <p class="text-slate-500 text-sm leading-relaxed">{{ selectedProduct.description }}</p>
+            <p class="text-3xl font-bold text-navy">$ {{ saveSelectedProduct.price }}</p>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              {{ saveSelectedProduct.description }}
+            </p>
             <hr class="border-slate-100" />
 
             <!-- 服務保障區塊 -->
@@ -350,8 +360,8 @@ const decreaseQty = () => {
             </div>
             <p class="text-sm">
               庫存：
-              <span :class="selectedProduct.stock > 0 ? 'text-green-500' : 'text-red-500'">
-                {{ selectedProduct.stock > 0 ? `${selectedProduct.stock} 件` : '已售完' }}
+              <span :class="saveSelectedProduct.stock > 0 ? 'text-green-500' : 'text-red-500'">
+                {{ saveSelectedProduct.stock > 0 ? `${saveSelectedProduct.stock} 件` : '已售完' }}
               </span>
             </p>
 
@@ -369,7 +379,7 @@ const decreaseQty = () => {
                 <!-- + 按鈕：數量等於庫存時變灰色無法點擊 -->
                 <n-button
                   size="small"
-                  :disabled="modalQuantity >= selectedProduct.stock"
+                  :disabled="modalQuantity >= saveSelectedProduct.stock"
                   @click="increaseQty"
                   >+</n-button
                 >
@@ -383,10 +393,10 @@ const decreaseQty = () => {
               <n-button
                 type="primary"
                 class="flex-1"
-                :disabled="selectedProduct.stock === 0"
+                :disabled="saveSelectedProduct.stock === 0"
                 @click="handleAddToCartWithQty"
               >
-                {{ selectedProduct.stock > 0 ? '加入購物車' : '已售完' }}
+                {{ saveSelectedProduct.stock > 0 ? '加入購物車' : '已售完' }}
               </n-button>
               <n-button @click="showProductDetail = false">關閉</n-button>
             </div>
