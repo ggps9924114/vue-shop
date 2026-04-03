@@ -103,8 +103,25 @@ const selectedProduct = ref(null)
 const handleShowDetail = (item) => {
   // 將點到的商品存起來
   selectedProduct.value = item
+  modalQuantity.value = 1
   // 顯示商品詳情內容
   showProductDetail.value = true
+}
+// 詳情modal數量選擇器
+const modalQuantity = ref(1)
+
+// 詳情數量增加且不能超過庫存
+const increaseQty = () => {
+  if (modalQuantity.value < selectedProduct.value.stock) {
+    modalQuantity.value++
+  }
+}
+
+// 詳情數量減少且不能低於1
+const decreaseQty = () => {
+  if (modalQuantity.value > 1) {
+    modalQuantity.value--
+  }
 }
 </script>
 
@@ -275,45 +292,104 @@ const handleShowDetail = (item) => {
     <!-- 點擊後的商品詳情內容 -->
     <n-modal v-model:show="showProductDetail">
       <n-card
-        style="width: 90vw; max-width: 1600px ; height: 90vh; max-height: 1000px;"
+        style="width: 90vw; max-width: 680px; max-width: 1000px"
         :bordered="false"
         role="dialog"
         aria-modal="true"
         class="rounded-2xl shadow-xl overflow-hidden"
+        content-style="padding: 0;"
       >
-        <!-- 如果 selectedProduct 有資料才顯示 -->
-        <div v-if="selectedProduct" class="flex flex-col gap-6">
-          <!-- 商品資訊內容 -->
-          <div class="h-[30vh] bg-slate-100 overflow-hidden rounded-xl">
+        <div v-if="selectedProduct" class="flex">
+          <!-- 左商品圖片 -->
+          <div class="w-2/5 min-h-[400px] flex-shrink-0 overflow-hidden">
             <img :src="selectedProduct.imageUrl" class="w-full h-full object-cover" />
           </div>
-          <div class="flex flex-col gap-3">
-            <div class="flex justify-between items-start">
+
+          <!-- 右商品資訊 -->
+          <div class="flex-1 p-6 flex flex-col gap-4">
+            <div class="flex items-center gap-3 flex-wrap">
               <h2 class="text-2xl font-bold text-slate-800">{{ selectedProduct.title }}</h2>
               <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full">
                 {{ selectedProduct.category }}
               </span>
             </div>
             <p class="text-3xl font-bold text-navy">$ {{ selectedProduct.price }}</p>
-            <p class="text-slate-500 leading-relaxed">{{ selectedProduct.description }}</p>
-            <p class="text-sm text-slate-400">
+            <p class="text-slate-500 text-sm leading-relaxed">{{ selectedProduct.description }}</p>
+            <hr class="border-slate-100" />
+
+            <!-- 服務保障區塊 -->
+            <div class="flex flex-col-3 gap-2 py-2">
+              <div
+                class="flex w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
+              >
+                <span class="text-xl flex-shrink-0">🚚</span>
+                <div>
+                  <p class="text-xs font-bold text-slate-700">免費配送</p>
+                  <p class="text-xs text-slate-400">滿 $500 免運</p>
+                </div>
+              </div>
+              <div
+                class="flex w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
+              >
+                <span class="text-xl flex-shrink-0">↩️</span>
+                <div>
+                  <p class="text-xs font-bold text-slate-700">7天退換</p>
+                  <p class="text-xs text-slate-400">不滿意免費退</p>
+                </div>
+              </div>
+
+              <div
+                class="flex w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
+              >
+                <span class="text-xl flex-shrink-0">🔒</span>
+                <div>
+                  <p class="text-xs font-bold text-slate-700">安全付款</p>
+                  <p class="text-xs text-slate-400">多種付款方式</p>
+                </div>
+              </div>
+            </div>
+            <p class="text-sm">
               庫存：
               <span :class="selectedProduct.stock > 0 ? 'text-green-500' : 'text-red-500'">
                 {{ selectedProduct.stock > 0 ? `${selectedProduct.stock} 件` : '已售完' }}
               </span>
             </p>
-          </div>
-          <!-- 底部按鈕 -->
-          <div class="flex gap-3">
-            <n-button
-              type="primary"
-              class="flex-1"
-              :disabled="selectedProduct.stock === 0"
-              @click="(handleAddToCart(selectedProduct), (showProductDetail = false))"
-            >
-              {{ selectedProduct.stock > 0 ? '加入購物車' : '已售完' }}
-            </n-button>
-            <n-button @click="showProductDetail = false">關閉</n-button>
+
+            <!-- 數量選擇器 -->
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-slate-500">數量</span>
+              <div class="flex items-center gap-3">
+                <!-- - 按鈕：數量等於 1 時變灰色無法點擊 -->
+                <n-button size="small" :disabled="modalQuantity <= 1" @click="decreaseQty"
+                  >-</n-button
+                >
+
+                <span class="w-8 text-center font-bold">{{ modalQuantity }}</span>
+
+                <!-- + 按鈕：數量等於庫存時變灰色無法點擊 -->
+                <n-button
+                  size="small"
+                  :disabled="modalQuantity >= selectedProduct.stock"
+                  @click="increaseQty"
+                  >+</n-button
+                >
+              </div>
+            </div>
+
+            <hr class="border-slate-100" />
+
+            <!-- 底部按鈕 -->
+            <div class="flex gap-3 mt-auto">
+              <n-button
+                type="primary"
+                class="flex-1"
+                :disabled="selectedProduct.stock === 0"
+                @click="handleAddToCartWithQty"
+              >
+                {{ selectedProduct.stock > 0 ? '加入購物車' : '已售完' }}
+              </n-button>
+              <n-button @click="showProductDetail = false">關閉</n-button>
+            </div>
           </div>
         </div>
       </n-card>
