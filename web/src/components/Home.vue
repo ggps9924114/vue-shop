@@ -121,7 +121,7 @@ const decreaseQty = () => {
     modalQuantity.value--
   }
 }
-
+// 詳情使用加入購物車處理
 const handleAddToCartWithQty = () => {
   for (let i = 0; i < modalQuantity.value; i++) {
     cartStore.addToCart(saveSelectedProduct.value)
@@ -131,11 +131,69 @@ const handleAddToCartWithQty = () => {
   )
   showProductDetail.value = false
 }
+
+// 確認送出訂單
+const handleConfirmCheckout = () => {
+  const itemCount = cartStore.cartList.length
+  cartStore.clearCart()
+  cartStore.closeCheckoutModal()
+  message.success(`本次購物共購買了 ${itemCount} 樣商品`)
+}
 </script>
 
 <template>
   <!-- 購物車畫面 -->
   <CartDrawer v-model:show="showCart"></CartDrawer>
+  <!-- 確認訂單 Modal -->
+  <n-modal v-model:show="cartStore.showCheckoutModal">
+    <n-card
+      style="width: 90vw; max-width: 560px"
+      :bordered="false"
+      role="dialog"
+      aria-modal="true"
+      class="rounded-2xl overflow-hidden"
+    >
+      <div class="flex flex-col gap-4">
+        <!-- 標題 -->
+        <h2 class="text-xl font-bold text-slate-800">確認訂單</h2>
+
+        <!-- 商品清單 -->
+        <div class="flex flex-col gap-2 max-h-60 overflow-y-auto">
+          <div
+            v-for="item in cartStore.cartList"
+            :key="item.id"
+            class="flex justify-between items-center p-3 bg-slate-50 rounded-xl"
+          >
+            <div class="flex items-center gap-3">
+              <img :src="item.imageUrl" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
+              <div>
+                <p class="font-bold text-sm truncate max-w-[200px]">{{ item.title }}</p>
+                <p class="text-xs text-slate-400">x {{ item.quantity }}</p>
+              </div>
+            </div>
+            <p class="font-bold text-sm text-navy">$ {{ item.price * item.quantity }}</p>
+          </div>
+        </div>
+
+        <!-- 分隔線 -->
+        <hr class="border-slate-100" />
+
+        <!-- 總金額 -->
+        <div class="flex justify-between items-center">
+          <span class="text-slate-500">總金額</span>
+          <span class="text-2xl font-bold text-navy">$ {{ cartStore.totalPrice }}</span>
+        </div>
+
+        <!-- 按鈕 -->
+        <div class="flex gap-3">
+          <n-button type="primary" class="flex-1" @click="handleConfirmCheckout"
+            >確認送出訂單</n-button
+          >
+          <n-button @click="cartStore.closeCheckoutModal">取消</n-button>
+        </div>
+      </div>
+    </n-card>
+  </n-modal>
   <SideMenu>
     <!-- 頂端橫幅 -->
     <div class="min-h-screen bg-slate-200">

@@ -61,6 +61,19 @@ export const useCartStore = defineStore(
     const clearCart = () => {
       cartList.value = []
     }
+
+    // 購物車確認結帳開關
+    const showCheckoutModal = ref(false)
+
+    // 開啟確認結帳
+    const openCheckoutModal = () => {
+      showCheckoutModal.value = true
+    }
+    // 關閉結帳
+    const closeCheckoutModal = () => {
+      showCheckoutModal.value = false
+    }
+
     return {
       cartList,
       addToCart,
@@ -69,6 +82,9 @@ export const useCartStore = defineStore(
       removeFromCart,
       updateQuantity,
       clearCart,
+      showCheckoutModal,
+      openCheckoutModal,
+      closeCheckoutModal,
     }
   },
   { persist: true },

@@ -27,12 +27,14 @@ export const useUserStore = defineStore(
       account.value = name
       isAdmin.value = name === 'admin'
     }
+
     return {
       isAdmin,
       isLogin,
       account,
       logOut,
       setLoginSuccess,
+  
     }
   },
   { persist: true }, //這樣檔案就可以持久化保存,

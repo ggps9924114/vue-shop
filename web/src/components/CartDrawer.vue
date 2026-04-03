@@ -15,11 +15,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
+// 結帳功能
 const handleCheckout = () => {
   if (cartStore.cartList.length === 0) return
-  message.success('購物車訂單已送出')
-  cartStore.clearCart()
+  // 關閉購物車畫面
   emit('update:modelValue', false)
+  // 打開確認訂單頁面
+  cartStore.openCheckoutModal()
 }
 
 // 刪除確認按鈕
