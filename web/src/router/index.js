@@ -5,6 +5,7 @@ import { useUserStore } from '@/store'
 const Login = () => import('@/components/Login.vue')
 const Home = () => import('@/components/Home.vue')
 const UserProfile = () => import('@/components/UserProfile.vue')
+const MyStore = () => import('@/components/MyStore.vue')
 // 定義路由：網址對應到哪個元件
 const routes = [
   {
@@ -25,6 +26,12 @@ const routes = [
     component: UserProfile,
     // mate 是路由附加資訊，需登入才能用
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/mystore',
+    name: 'MyStore',
+    component: MyStore,
+    mate: { requitesAuth: true },
   },
 ]
 

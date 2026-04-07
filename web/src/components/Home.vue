@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useUserStore, useProductStore, useCartStore } from '@/store'
+import { useUserStore, useProductStore, useCartStore, useOrderStore } from '@/store'
 import {
   useDialog,
   useMessage,
@@ -21,6 +21,8 @@ import CartDrawer from './CartDrawer.vue'
 const userStore = useUserStore()
 const productStore = useProductStore()
 const cartStore = useCartStore()
+const orderStore = useOrderStore()
+
 const dialog = useDialog()
 const message = useMessage()
 // 購物車開關
@@ -135,6 +137,12 @@ const handleAddToCartWithQty = () => {
 // 確認送出訂單
 const handleConfirmCheckout = () => {
   const itemCount = cartStore.cartList.length
+  // 清空前先存訂單並傳入清單、總金額、目前登入帳號
+  orderStore.addOrder(
+    cartStore.cartList,
+    cartStore.totalPrice,
+    userStore.account
+  )
   cartStore.clearCart()
   cartStore.closeCheckoutModal()
   message.success(`本次購物共購買了 ${itemCount} 樣商品`)

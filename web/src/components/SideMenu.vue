@@ -8,7 +8,7 @@ import {
   HomeOutline as Home,
 } from '@vicons/ionicons5'
 import { NIcon, NMenu, NLayoutContent, NSpace, NSwitch, NLayout, NLayoutSider } from 'naive-ui'
-import { h, ref } from 'vue'
+import { defineCustomElement, h, ref } from 'vue'
 import { Edit } from '@vicons/tabler'
 import { useRouter } from 'vue-router'
 
@@ -18,6 +18,7 @@ const handleMenuSelect = (key) => {
   const routeMap = {
     home: { name: 'Home' },
     editPersonalInfo: { name: 'UserProfile' },
+    MyStore: { name: 'MyStore' },
   }
   // 用點到的key去抓是否存在，如果存在就去找並跳轉
   if (routeMap[key]) {
@@ -35,7 +36,7 @@ function renderIcon(icon) {
       default: () => h(icon),
     })
 }
-// 選單資訊
+// 選單資訊(對應routeMap)
 const menuOptions = [
   { label: '首頁', key: 'home', icon: renderIcon(Home) },
   {
@@ -47,7 +48,7 @@ const menuOptions = [
   },
   {
     label: '我的賣場',
-    key: 'myStore',
+    key: 'MyStore',
     icon: renderIcon(Store),
   },
 ]
