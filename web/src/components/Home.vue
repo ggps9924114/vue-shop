@@ -1,23 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore, useProductStore, useCartStore, useOrderStore } from '@/store'
-import {
-  useDialog,
-  useMessage,
-  NCard,
-  NButton,
-  NModal,
-  NInput,
-  NForm,
-  NFormItem,
-  NInputNumber,
-  NUpload,
-  NBadge,
-} from 'naive-ui'
+import { useDialog, useMessage, NCard, NButton, NModal, NBadge } from 'naive-ui'
 // import { Discount } from '@vicons/tabler'
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
 import CartDrawer from './CartDrawer.vue'
+import ProductModal from './ProductModal.vue'
 const userStore = useUserStore()
 const productStore = useProductStore()
 const cartStore = useCartStore()
@@ -27,55 +16,6 @@ const dialog = useDialog()
 const message = useMessage()
 // 購物車開關
 const showCart = ref(false)
-// 上傳成功的照片預覽開關
-const showImagePreview = ref(false)
-// 上傳成功的照片網址
-const previewImageUrl = ref('')
-// 上傳照片功能
-const handleUploadChange = (data) => {
-  if (!data.fileList || data.fileList.length === 0) {
-    console.log('未選取任何檔案')
-    return
-  }
-
-  const file = data.fileList[0]?.file
-  if (!file) return
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    // 圖片文字
-    const base64 = e.target.result
-    productStore.newProduct.imageUrl = base64
-    if (data.fileList && data.fileList[0]) {
-      data.fileList[0].status = 'finished'
-      data.fileList[0].url = base64
-      console.log('讀取完成，Base64 字串已產生')
-    }
-  }
-  reader.readAsDataURL(file)
-}
-
-const handlePreview = () => {
-  // 把存進 useProduct 的網址拿出來顯示
-  previewImageUrl.value = productStore.newProduct.imageUrl
-  showImagePreview.value = true
-}
-//
-
-const handleProductAddAndSave = () => {
-  if (!productStore.newProduct.title) {
-    message.error('請輸入商品名稱')
-    return
-  }
-
-  productStore.saveProduct()
-
-  if (productStore.isEdit) {
-    message.success('更新商品成功')
-  } else {
-    message.success('新增商品成功')
-  }
-}
 
 // 加Dialog的刪除商品
 const handleProductDel = (item) => {
@@ -138,11 +78,7 @@ const handleAddToCartWithQty = () => {
 const handleConfirmCheckout = () => {
   const itemCount = cartStore.cartList.length
   // 清空前先存訂單並傳入清單、總金額、目前登入帳號
-  orderStore.addOrder(
-    cartStore.cartList,
-    cartStore.totalPrice,
-    userStore.account
-  )
+  orderStore.addOrder(cartStore.cartList, cartStore.totalPrice, userStore.account)
   cartStore.clearCart()
   cartStore.closeCheckoutModal()
   message.success(`本次購物共購買了 ${itemCount} 樣商品`)
@@ -152,6 +88,7 @@ const handleConfirmCheckout = () => {
 <template>
   <!-- 購物車畫面 -->
   <CartDrawer v-model:show="showCart"></CartDrawer>
+  <ProductModal />
   <!-- 確認訂單 Modal -->
   <n-modal v-model:show="cartStore.showCheckoutModal">
     <n-card
@@ -230,78 +167,7 @@ const handleConfirmCheckout = () => {
         <section class="mb-10">
           <HomeBanner />
         </section>
-        <n-modal v-model:show="productStore.showAddProduct">
-          <!-- 新增商品彈出視窗 -->
-          <n-card
-            style="width: 600px"
-            :bordered="false"
-            size="huge"
-            role="dialog"
-            aria-modal="true"
-            class="border-2 border-solid rounded-xl shadow-md"
-          >
-            <div class="text-2xl m-4 mt-0 text-center">
-              {{ productStore.isEdit ? '編輯商品' : '新增商品' }}
-            </div>
 
-            <n-form label-placement="left">
-              <n-form-item label="名稱：">
-                <n-input
-                  v-model:value="productStore.newProduct.title"
-                  type="text"
-                  placeholder="請輸入商品名稱"
-                />
-              </n-form-item>
-              <n-form-item label="價格：">
-                <n-input-number
-                  v-model:value="productStore.newProduct.price"
-                  placeholder="請輸入價格"
-                  :min="0"
-              /></n-form-item>
-              <n-form-item label="類型：">
-                <n-input
-                  v-model:value="productStore.newProduct.category"
-                  placeholder="請輸入商品類型"
-                  type="text"
-              /></n-form-item>
-              <n-form-item label="說明：">
-                <n-input
-                  v-model:value="productStore.newProduct.description"
-                  type="text"
-                  placeholder="請描述商品"
-              /></n-form-item>
-              <n-form-item label="庫存：">
-                <n-input
-                  v-model:value="productStore.newProduct.stock"
-                  type="number"
-                  placeholder="請輸入商品庫存"
-              /></n-form-item>
-              <!-- 上傳圖片 -->
-              <n-form-item label="封面：" label-placement="left">
-                <n-upload
-                  action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-                  list-type="image-card"
-                  :default-upload="false"
-                  @change="handleUploadChange"
-                  @preview="handlePreview"
-                >
-                  新增圖片
-                </n-upload>
-              </n-form-item>
-              <n-modal v-model:show="showImagePreview" preset="card" style="width: 600px" title="">
-                <img :src="previewImageUrl" style="width: 100%" />
-              </n-modal>
-
-              <div class="gap-6 flex justify-center items-center">
-                <n-button type="primary" @click.prevent="handleProductAddAndSave">{{
-                  productStore.isEdit ? '修改儲存' : '新增商品'
-                }}</n-button>
-
-                <n-button type="error" @click="productStore.cxlAddProduct">取消</n-button>
-              </div>
-            </n-form>
-          </n-card>
-        </n-modal>
         <section v-if="productStore.products.length === 0" class="w-full">
           <div class="flex">
             <h3 class="text-2xl text-slate-500 mx-auto">目前尚未有商品，請稍後再重新查看</h3>

@@ -29,13 +29,13 @@ export const useOrderStore = defineStore(
       orders.value.push(newOrder)
     }
     // 取得指定帳號的訂單（一般用戶只看自己的
-    const getOrderByAccount = computed(() => {
+    const getOrdersByAccount = computed(() => {
       return (account) => orders.value.filter((order) => order.account === account)
     })
     return {
       orders,
       addOrder,
-      getOrderByAccount,
+      getOrdersByAccount,
     }
   },
   { persist: true },

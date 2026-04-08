@@ -1,11 +1,11 @@
 <script setup>
-import { useUserStore, useCartStore, useOrderStore, useProductStore } from '@/store'
+import { useUserStore, useOrderStore, useProductStore } from '@/store'
 import { useDialog, useMessage, NButton } from 'naive-ui'
 import SideMenu from './SideMenu.vue'
+import ProductModal from './ProductModal.vue'
 import { computed } from 'vue'
 
 const userStore = useUserStore()
-const cartStore = useCartStore()
 const orderStore = useOrderStore()
 const productStore = useProductStore()
 
@@ -15,12 +15,12 @@ const dialog = useDialog()
 const totalProducts = computed(() => productStore.products.length)
 // 售完的商品數量
 const soldOutProducts = computed(() => productStore.products.filter((p) => p.stock === 0).length)
-
+// 總價值：用 reduce 把每個商品的（價格 × 庫存）加總
 const totalStockValue = computed(() =>
   productStore.products.reduce((sum, p) => sum + p.price * p.stock, 0),
 )
 // 依照權限看有哪一些訂單
-const myOrders = computed(() => orderStore.getOrderByAccount(userStore.account))
+const myOrders = computed(() => orderStore.getOrdersByAccount(userStore.account))
 
 // 管理員刪除商品
 const handleProductDel = (item) => {
@@ -38,27 +38,41 @@ const handleProductDel = (item) => {
 </script>
 <template>
   <SideMenu>
+    <ProductModal></ProductModal>
+    <div class="container mb-2 px-4 mx-auto h-16 flex justify-between items-center">
+      <p>登入成功，歡迎{{ userStore.account }}</p>
+      <div class="flex gap-2 items-center">
+        <n-button type="error" @click="userStore.logOut">登出</n-button>
+        <n-button
+          v-if="userStore.isAdmin"
+          type="primary"
+          size="medium"
+          @click.prevent="productStore.openAddModal"
+          >新增商品</n-button
+        >
+      </div>
+    </div>
     <div class="min-h-screen bg-slate-200">
       <div class="container mx-auto p-6">
         <!-- 商品數據  只有管理員看得到 -->
         <div v-if="userStore.isAdmin">
           <h2 class="text-2xl font-bold mb-6">我的賣場</h2>
           <div class="grid grid-cols-3 gap-4">
-            <div class="bg-white text-center p-5 rounded-xl shadow-sm">
+            <div class="bg-white text-center p-5 rounded-md shadow-sm">
               <p class="text-2xl font-bold text-navy">{{ totalProducts }}</p>
               <p class="text-sm mt-2">商品總數</p>
             </div>
-            <div class="bg-white text-center p-5 rounded-xl shadow-sm">
-              <p class="text-2xl font-bold text-navy">{{ soldOutProducts }}</p>
+            <div class="bg-white text-center p-5 rounded-md shadow-sm">
+              <p class="text-2xl font-bold text-red-500">{{ soldOutProducts }}</p>
               <p class="text-sm text-slate-500 mt-2">已售完</p>
             </div>
-            <div class="bg-white text-center p-5 rounded-xl shadow-sm">
+            <div class="bg-white text-center p-5 rounded-md shadow-sm">
               <p class="text-3xl font-bold text-green-600">$ {{ totalStockValue }}</p>
               <p class="text-sm mt-2">庫存總價值</p>
             </div>
           </div>
           <!-- 商品管理列表標題 -->
-          <div class="bg-white mt-6 rounded-xl shadow-sm">
+          <div class="bg-white mt-6 rounded-md shadow-sm">
             <div class="p-4 border-b border-slate-100">
               <h3 class="text-3xl font-bold text-navy">商品管理列表</h3>
             </div>
