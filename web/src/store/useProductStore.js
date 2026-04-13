@@ -70,7 +70,6 @@ export const useProductStore = defineStore(
       showAddProduct.value = true // 商品的畫面
     }
 
-
     // 編輯商品修改後儲存
     // 存檔按鈕觸發 (在 Home.vue 的 handleConfirm 中呼叫)
     const saveProduct = () => {
@@ -100,6 +99,21 @@ export const useProductStore = defineStore(
       showAddProduct.value = true
     }
 
+    // 當物品加入購物車時會扣庫存
+    const decreaseStock = (productId, quantity = 1) => {
+      const target = products.value.find((p) => p.id === productId)
+      if (target && target.stock >= quantity) {
+        target.stock -= quantity
+      }
+    }
+    // 當物品從購物車移除時會扣庫存
+    const increaseStock = (productId, quantity = 1) => {
+      const target = products.value.find((p) => p.id === productId)
+      if (target) {
+        target.stock += quantity
+      }
+    }
+
     return {
       newProduct,
       products,
@@ -111,6 +125,8 @@ export const useProductStore = defineStore(
       cxlAddProduct,
       editProduct,
       openAddModal,
+      decreaseStock,
+      increaseStock,
     }
   },
   { persist: true }, //這樣檔案就可以持久化保存,

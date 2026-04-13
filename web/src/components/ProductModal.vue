@@ -112,10 +112,11 @@ const handleProductAddAndSave = () => {
           />
         </n-form-item>
         <n-form-item label="庫存：">
-          <n-input
+          <n-input-number
             v-model:value="productStore.newProduct.stock"
             type="number"
             placeholder="請輸入商品庫存"
+            :min="0"
           />
         </n-form-item>
 

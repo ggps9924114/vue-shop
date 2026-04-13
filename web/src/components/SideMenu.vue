@@ -1,14 +1,11 @@
 <script setup>
 import {
-  //   BookOutline as BookIcon,
   PersonOutline as PersonIcon,
-  //   WineOutline as WineIcon,
-  //   UserCircle as UserIcon,
   StorefrontOutline as Store,
   HomeOutline as Home,
 } from '@vicons/ionicons5'
-import { NIcon, NMenu, NLayoutContent, NSpace, NSwitch, NLayout, NLayoutSider } from 'naive-ui'
-import { defineCustomElement, h, ref } from 'vue'
+import { NIcon, NMenu, NLayoutContent, NLayout, NLayoutSider } from 'naive-ui'
+import { h, ref } from 'vue'
 import { Edit } from '@vicons/tabler'
 import { useRouter } from 'vue-router'
 
@@ -44,7 +41,7 @@ const menuOptions = [
     key: 'userProfile',
     icon: renderIcon(PersonIcon),
     // 下拉選單(名字不可改)
-    children: [{ label: '修改個人資訊', key: 'editPersonalInfo', icon: renderIcon(Edit) }],
+    children: [{ label: '訂單資訊', key: 'editPersonalInfo', icon: renderIcon(Edit) }],
   },
   {
     label: '我的賣場',
