@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/store'
 
 // 匯入頁面的原件，用懶加載，User 進到該頁面時才會加載
@@ -36,9 +36,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  // history 決定網址的呈現方式
-  history: createWebHistory(),
-  // 把上面定義的路由表傳進來
+  history: createWebHashHistory(),
   routes,
 })
 
