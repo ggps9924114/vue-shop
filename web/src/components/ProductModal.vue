@@ -11,6 +11,7 @@ import {
   NInputNumber,
   NUpload,
   useMessage,
+  NSelect,
 } from 'naive-ui'
 
 const productStore = useProductStore()
@@ -98,10 +99,10 @@ const handleProductAddAndSave = () => {
           />
         </n-form-item>
         <n-form-item label="類型：">
-          <n-input
+          <n-select
             v-model:value="productStore.newProduct.category"
-            placeholder="請輸入商品類型"
-            type="text"
+            :options="productStore.categories"
+            placeholder="請選擇商品類型"
           />
         </n-form-item>
         <n-form-item label="說明：">
