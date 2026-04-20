@@ -4,7 +4,6 @@ import { useUserStore } from '@/store/useUserStore'
 import { NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { sign_in, sign_up } from '@/assets'
-import { LetterD } from '@vicons/tabler'
 
 const router = useRouter()
 const message = useMessage()
@@ -152,7 +151,7 @@ const leftPanel = computed(() => {
             mode="out-in"
           >
             <!-- 登入畫面 -->
-            <n-form v-if="!isRegistered" @submit.prevent="login">
+            <n-form :model="formData" v-if="!isRegistered" @submit.prevent="login">
               <div class="mb-8">
                 <h2 class="text-3xl font-bold text-slate-800">登入</h2>
                 <p class="mt-2 text-slate-400">請輸入帳號密碼，還沒有帳號請先進行註冊</p>
@@ -177,7 +176,7 @@ const leftPanel = computed(() => {
             </n-form>
 
             <!-- 註冊畫面 -->
-            <n-form v-else @submit.prevent="handleSignup">
+            <n-form :model="formData" v-else @submit.prevent="handleSignup">
               <div class="mb-8">
                 <h2 class="text-3xl font-bold text-slate-800">註冊</h2>
                 <p class="mt-2 text-slate-400">如果你已經有帳號，請返回直接登入吧！</p>

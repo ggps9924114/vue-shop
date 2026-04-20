@@ -193,11 +193,13 @@ const handleConfirmCheckout = () => {
 
               <div class="p-4">
                 <h3 class="font-bold text-lg truncate mb-1">{{ item.title }}</h3>
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-2">
                   <span class="text-xl font-bold text-navy">$ {{ item.price }}</span>
                   <span class="text-xs text-slate-400">庫存: {{ item.stock }}</span>
                 </div>
-
+                <div class="flex  mb-2">
+                  <span class="text-xs text-slate-500 truncate">{{ item.description }}</span>
+                </div>
                 <div class="grid grid-cols-2 gap-2">
                   <n-button
                     v-if="userStore.isAdmin"
