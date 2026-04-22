@@ -8,7 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig({
   plugins: [vue(), vueDevTools()],
   // 開發的時候註解，部屬再打開
-  base: '/vue-shop',
+  // base: '/vue-shop',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

@@ -35,32 +35,43 @@ const handleProductDel = (item) => {
     },
   })
 }
+
+// 上下架切換顯示
+const handleToggleActive = (item) => {
+  dialog.warning({
+    title: item.isActive ? '確認下架' : '確認上架',
+    content: item.isActive
+      ? `確定要將「${item.title}」下架嗎？下架後首頁將不顯示此商品。`
+      : `確定要將「${item.title}」上架嗎？上架後首頁將顯示此商品。`,
+    positiveText: item.isActive ? '確認下架' : '確認上架',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      productStore.toggleActive(item.id)
+      message.success(item.isActive ? `「${item.title}」已上架` : `「${item.title}」已下架`)
+    },
+  })
+}
+
+// 已下架商品數量
+const inactiveProducts = computed(() => productStore.products.filter((p) => !p.isActive).length)
 </script>
 <template>
   <SideMenu>
     <ProductModal></ProductModal>
-    <div class="container mb-2 px-4 mx-auto h-16 flex justify-between items-center">
-      <p>登入成功，歡迎{{ userStore.account }}</p>
-      <div class="flex gap-2 items-center">
-        <n-button type="error" @click="userStore.logOut">登出</n-button>
-        <n-button
-          v-if="userStore.isAdmin"
-          type="primary"
-          size="medium"
-          @click.prevent="productStore.openAddModal"
-          >新增商品</n-button
-        >
-      </div>
-    </div>
+
     <div class="min-h-screen bg-slate-200">
       <div class="container mx-auto p-6">
         <!-- 商品數據  只有管理員看得到 -->
         <div v-if="userStore.isAdmin">
           <h2 class="text-2xl font-bold mb-6">我的賣場</h2>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-4 gap-4">
             <div class="bg-white text-center p-5 rounded-md shadow-sm">
               <p class="text-2xl font-bold text-navy">{{ totalProducts }}</p>
               <p class="text-sm mt-2">商品總數</p>
+            </div>
+            <div class="bg-white text-center p-5 rounded-md shadow-sm">
+              <p class="text-2xl font-bold text-orange-500">{{ inactiveProducts }}</p>
+              <p class="text-sm mt-2">已下架</p>
             </div>
             <div class="bg-white text-center p-5 rounded-md shadow-sm">
               <p class="text-2xl font-bold text-red-500">{{ soldOutProducts }}</p>
@@ -74,7 +85,7 @@ const handleProductDel = (item) => {
           <!-- 商品管理列表標題 -->
           <div class="bg-white mt-6 rounded-md shadow-sm">
             <div class="p-4 border-b border-slate-100">
-              <h3 class="text-3xl font-bold text-navy">商品管理列表</h3>
+              <h3 class="text-2xl font-bold text-navy">商品管理列表</h3>
             </div>
             <!-- 沒有商品時 -->
             <div
@@ -100,17 +111,28 @@ const handleProductDel = (item) => {
 
               <span
                 class="text-xs px-2 py-1 rounded-full flex-shrink-0"
-                :class="
-                  item.stock > 0 ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-400'
-                "
+                :class="{
+                  'bg-green-50 text-green-600': item.isActive && item.stock > 0,
+                  'bg-slate-100 text-slate-400': item.isActive && item.stock === 0,
+                  'bg-orange-50 text-orange-500': !item.isActive,
+                }"
               >
-                {{ item.stock > 0 ? '上架中' : '已售完' }}
+                {{ !item.isActive ? '已下架' : item.stock > 0 ? '上架中' : '已售完' }}
               </span>
 
               <div class="flex gap-2 flex-shrink-0">
                 <n-button size="small" type="primary" ghost @click="productStore.editProduct(item)">
                   編輯
                 </n-button>
+                <n-button
+                  size="small"
+                  :type="item.isActive ? 'warning' : 'success'"
+                  ghost
+                  @click="handleToggleActive(item)"
+                >
+                  {{ item.isActive ? '下架' : '上架' }}</n-button
+                >
+
                 <n-button size="small" type="error" ghost @click="handleProductDel(item)">
                   刪除
                 </n-button>

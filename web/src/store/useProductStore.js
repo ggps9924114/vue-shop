@@ -11,6 +11,7 @@ export const useProductStore = defineStore(
       imageUrl: '',
       description: '',
       stock: 0,
+      isActive: true,
     })
 
     // 假資料
@@ -24,6 +25,7 @@ export const useProductStore = defineStore(
           'https://plus.unsplash.com/premium_photo-1677159499898-b061fb5bd2d7?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         description: '極致音質，續航力長達 10 小時，質感木紋外殼設計',
         stock: 15,
+        isActive: true,
       },
       {
         id: 2,
@@ -34,6 +36,7 @@ export const useProductStore = defineStore(
           'https://plus.unsplash.com/premium_photo-1679513691474-73102089c117?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2lyZWxlc3MlMjBoZWFkcGhvbmVzfGVufDB8fDB8fHww',
         description: '主動降噪技術，通話清晰，折疊設計方便攜帶',
         stock: 8,
+        isActive: true,
       },
       {
         id: 3,
@@ -44,6 +47,7 @@ export const useProductStore = defineStore(
           'https://images.unsplash.com/photo-1772651392135-b891a5e4f8a3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y29va2llcyUyMGdpZnQlMjBib3h8ZW58MHx8MHx8fDA%3D',
         description: '嚴選天然食材，無添加防腐劑，送禮自用兩相宜',
         stock: 30,
+        isActive: true,
       },
       {
         id: 4,
@@ -53,7 +57,9 @@ export const useProductStore = defineStore(
         imageUrl:
           'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b2xpdmUlMjBvaWx8ZW58MHx8MHx8fDA%3D',
         description: '義大利進口，低溫冷壓萃取，保留完整營養',
+        isActive: true,
         stock: 20,
+        isActive: true,
       },
       {
         id: 5,
@@ -64,6 +70,7 @@ export const useProductStore = defineStore(
           'https://images.unsplash.com/photo-1710410815589-dd83514104d0?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c2VydW0lMjBza2luY2FyZXxlbnwwfHwwfHx8MA%3D%3D',
         description: '多重玻尿酸複合配方，深層補水，敏感肌適用',
         stock: 25,
+        isActive: true,
       },
       {
         id: 6,
@@ -74,6 +81,7 @@ export const useProductStore = defineStore(
           'https://images.unsplash.com/photo-1657023828553-18c23601c4d7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c3Vuc2NyZWVufGVufDB8fDB8fHww',
         description: 'SPF50+ PA++++，輕薄不黏膩，含抗氧化植萃',
         stock: 18,
+        isActive: true,
       },
       {
         id: 7,
@@ -84,6 +92,7 @@ export const useProductStore = defineStore(
           'https://plus.unsplash.com/premium_photo-1681324227573-953664cf9b32?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FudmFzJTIwdG90ZSUyMGJhZ3xlbnwwfHwwfHx8MA%3D%3D',
         description: '厚磅帆布材質，大容量設計，多色可選',
         stock: 12,
+        isActive: true,
       },
       {
         id: 8,
@@ -94,6 +103,7 @@ export const useProductStore = defineStore(
           'https://images.unsplash.com/photo-1572726729207-a78d6feb18d7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHNjZW50ZWQlMjBjYW5kbGV8ZW58MHx8MHx8fDA%3D',
         description: '天然大豆蠟，精油香氣，燃燒時間長達 40 小時',
         stock: 35,
+        isActive: true,
       },
     ])
     // 新增商品彈出開關
@@ -165,6 +175,7 @@ export const useProductStore = defineStore(
         imageUrl: '',
         description: '',
         stock: 0,
+        isActive: true,
       }
       showAddProduct.value = true
     }
@@ -192,7 +203,13 @@ export const useProductStore = defineStore(
         target.stock += quantity
       }
     }
-
+    // 切換上下架
+    const toggleActive = (productId) => {
+      const target = products.value.find((p) => p.id === productId)
+      if (target) {
+        target.isActive = !target.isActive
+      }
+    }
     return {
       newProduct,
       products,
@@ -207,6 +224,7 @@ export const useProductStore = defineStore(
       decreaseStock,
       increaseStock,
       categories,
+      toggleActive,
     }
   },
   { persist: true }, //這樣檔案就可以持久化保存,

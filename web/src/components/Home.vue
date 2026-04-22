@@ -102,7 +102,7 @@ const handleConfirmCheckout = () => {
         <!-- 標題 -->
         <h2 class="text-xl font-bold text-slate-800">確認訂單</h2>
 
-        <!-- 商品清單 -->
+        <!-- 購物車的商品清單 -->
         <div class="flex flex-col gap-2 max-h-60 overflow-y-auto">
           <div
             v-for="item in cartStore.cartList"
@@ -168,7 +168,7 @@ const handleConfirmCheckout = () => {
           <HomeBanner />
         </section>
 
-        <section v-if="productStore.products.length === 0" class="w-full">
+        <section v-if="productStore.products.filter((p) => p.isActive).length === 0" class="w-full">
           <div class="flex">
             <h3 class="text-2xl text-slate-500 mx-auto">目前尚未有商品，請稍後再重新查看</h3>
           </div>
@@ -178,7 +178,11 @@ const handleConfirmCheckout = () => {
           v-else
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-4"
         >
-          <div v-for="item in productStore.products" :key="item.id" class="group">
+          <div
+            v-for="item in productStore.products.filter((p) => p.isActive)"
+            :key="item.id"
+            class="group"
+          >
             <n-card
               content-style="padding: 0;"
               class="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
@@ -197,7 +201,7 @@ const handleConfirmCheckout = () => {
                   <span class="text-xl font-bold text-navy">$ {{ item.price }}</span>
                   <span class="text-xs text-slate-400">庫存: {{ item.stock }}</span>
                 </div>
-                <div class="flex  mb-2">
+                <div class="flex mb-2">
                   <span class="text-xs text-slate-500 truncate">{{ item.description }}</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
