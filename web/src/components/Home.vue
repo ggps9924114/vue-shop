@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useUserStore, useProductStore, useCartStore, useOrderStore } from '@/store'
 import { useDialog, useMessage, NCard, NButton, NModal, NBadge } from 'naive-ui'
 // import { Discount } from '@vicons/tabler'
@@ -39,6 +39,18 @@ const handleAddToCart = (item) => {
 const showProductDetail = ref(false)
 // 存放點到商品的資訊
 const saveSelectedProduct = ref(null)
+
+const currentProduct = computed(() => {
+  if (!saveSelectedProduct.value) return null
+  // 用 id 從 productStore 找到最新的商品資料
+  return productStore.products.find((p) => p.id === saveSelectedProduct.value.id)
+})
+
+// 商品詳情選擇數量後的剩餘庫存
+const remainingStock = computed(() => {
+  if (!currentProduct.value) return 0
+  return currentProduct.value.stock - modalQuantity.value
+})
 // 點商品顯示資訊
 const handleShowDetail = (item) => {
   // 將點到的商品存起來
@@ -52,7 +64,7 @@ const modalQuantity = ref(1)
 
 // 詳情數量增加且不能超過庫存
 const increaseQty = () => {
-  if (modalQuantity.value < saveSelectedProduct.value.stock) {
+  if (modalQuantity.value < currentProduct.value.stock) {
     modalQuantity.value++
   }
 }
@@ -65,12 +77,22 @@ const decreaseQty = () => {
 }
 // 詳情使用加入購物車處理
 const handleAddToCartWithQty = () => {
-  for (let i = 0; i < modalQuantity.value; i++) {
-    cartStore.addToCart(saveSelectedProduct.value)
+  const product = currentProduct.value
+  if (!product || product.stock <= 0) return
+
+  const targetItem = cartStore.cartList.find((item) => item.id === product.id)
+
+  if (targetItem) {
+    // 已有這個商品 → 直接修改數量並扣庫存
+    targetItem.quantity += modalQuantity.value
+    productStore.decreaseStock(product.id, modalQuantity.value)
+  } else {
+    // 沒有這個商品 → 推入購物車並扣庫存
+    cartStore.cartList.push({ ...product, quantity: modalQuantity.value })
+    productStore.decreaseStock(product.id, modalQuantity.value)
   }
-  message.success(
-    `已將 ${modalQuantity.value} 件「${saveSelectedProduct.value.title}」加入購物車！`,
-  )
+
+  message.success(`已將 ${modalQuantity.value} 件「${product.title}」加入購物車！`)
   showProductDetail.value = false
 }
 
@@ -155,7 +177,7 @@ const handleConfirmCheckout = () => {
               @click.prevent="productStore.openAddModal"
               >新增商品</n-button
             >
-            <n-badge :value="cartStore.totalQuantity" max="99">
+            <n-badge :value="cartStore.totalQuantity" :max="99">
               <n-button type="primary" size="medium" @click="showCart = true">購物車</n-button>
             </n-badge>
           </div>
@@ -245,23 +267,23 @@ const handleConfirmCheckout = () => {
         class="rounded-2xl shadow-xl overflow-hidden"
         content-style="padding: 0;"
       >
-        <div v-if="saveSelectedProduct" class="flex">
+        <div v-if="currentProduct" class="flex">
           <!-- 左商品圖片 -->
           <div class="w-2/5 min-h-[400px] flex-shrink-0 overflow-hidden">
-            <img :src="saveSelectedProduct.imageUrl" class="w-full h-full object-cover" />
+            <img :src="currentProduct.imageUrl" class="w-full h-full object-cover" />
           </div>
 
           <!-- 右商品資訊 -->
           <div class="flex-1 p-6 flex flex-col gap-4">
             <div class="flex items-center gap-3 flex-wrap">
-              <h2 class="text-2xl font-bold text-slate-800">{{ saveSelectedProduct.title }}</h2>
+              <h2 class="text-2xl font-bold text-slate-800">{{ currentProduct.title }}</h2>
               <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full">
-                {{ saveSelectedProduct.category }}
+                {{ currentProduct.category }}
               </span>
             </div>
-            <p class="text-3xl font-bold text-navy">$ {{ saveSelectedProduct.price }}</p>
+            <p class="text-3xl font-bold text-navy">$ {{ currentProduct.price }}</p>
             <p class="text-slate-500 text-sm leading-relaxed">
-              {{ saveSelectedProduct.description }}
+              {{ currentProduct.description }}
             </p>
             <hr class="border-slate-100" />
 
@@ -298,8 +320,8 @@ const handleConfirmCheckout = () => {
             </div>
             <p class="text-sm">
               庫存：
-              <span :class="saveSelectedProduct.stock > 0 ? 'text-green-500' : 'text-red-500'">
-                {{ saveSelectedProduct.stock > 0 ? `${saveSelectedProduct.stock} 件` : '已售完' }}
+              <span :class="currentProduct.stock > 0 ? 'text-green-500' : 'text-red-500'">
+                {{ remainingStock > 0 ? `${remainingStock}  件` : '已售完' }}
               </span>
             </p>
 
@@ -317,7 +339,7 @@ const handleConfirmCheckout = () => {
                 <!-- + 按鈕：數量等於庫存時變灰色無法點擊 -->
                 <n-button
                   size="small"
-                  :disabled="modalQuantity >= saveSelectedProduct.stock"
+                  :disabled="modalQuantity >= currentProduct.stock"
                   @click="increaseQty"
                   >+</n-button
                 >
@@ -331,10 +353,10 @@ const handleConfirmCheckout = () => {
               <n-button
                 type="primary"
                 class="flex-1"
-                :disabled="saveSelectedProduct.stock === 0"
+                :disabled="currentProduct.stock === 0"
                 @click="handleAddToCartWithQty"
               >
-                {{ saveSelectedProduct.stock > 0 ? '加入購物車' : '已售完' }}
+                {{ currentProduct.stock > 0 ? '加入購物車' : '已售完' }}
               </n-button>
               <n-button @click="showProductDetail = false">關閉</n-button>
             </div>
