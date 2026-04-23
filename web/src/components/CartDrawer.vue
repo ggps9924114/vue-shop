@@ -1,6 +1,7 @@
 <script setup>
 import { useCartStore } from '@/store'
 import { NDrawer, NDrawerContent, NEmpty, NButton, useMessage, useDialog } from 'naive-ui'
+import { empty_cart } from '@/assets'
 // defineProps 和 defineEmits 在 script setup 裡不需要 import，直接用
 const message = useMessage()
 const dialog = useDialog()
@@ -50,11 +51,14 @@ const headleRemoveFromCart = (item) => {
   >
     <n-drawer-content title=" 購物車" closable>
       <!-- 購物車是空的 → 顯示提示 -->
-      <n-empty
+      <div
         v-if="cartStore.cartList.length === 0"
-        description="目前購物車沒有商品，請去挑選幾樣商品吧~"
-        class="mt-20"
-      />
+        class="flex flex-col items-center justify-center mt-12 gap-4"
+      >
+        <img :src="empty_cart" class="w-48 opacity-80" />
+        <p class="text-slate-400 text-sm">購物車目前是空的</p>
+        <p class="text-slate-300 text-xs">去首頁挑選喜歡的商品吧！</p>
+      </div>
 
       <!-- 購物車有商品 → 顯示清單 -->
       <div v-else class="flex flex-col gap-4">

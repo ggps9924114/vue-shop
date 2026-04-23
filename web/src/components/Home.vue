@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useUserStore, useProductStore, useCartStore, useOrderStore } from '@/store'
 import { useDialog, useMessage, NCard, NButton, NModal, NBadge } from 'naive-ui'
-// import { Discount } from '@vicons/tabler'
+import { empty } from '@/assets'
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
 import CartDrawer from './CartDrawer.vue'
@@ -163,7 +163,7 @@ const handleConfirmCheckout = () => {
   </n-modal>
   <SideMenu>
     <!-- 頂端橫幅 -->
-    <div class="min-h-screen bg-slate-200">
+    <div class="min-h-screen bg-slate-50">
       <!-- nav跟div意思一樣 , 但nav讓無障礙可以讀出 -->
       <nav class="bg-white shadow-sm mb-8">
         <div class="container mb-2 px-4 mx-auto h-16 flex justify-between items-center">
@@ -191,8 +191,10 @@ const handleConfirmCheckout = () => {
         </section>
 
         <section v-if="productStore.products.filter((p) => p.isActive).length === 0" class="w-full">
-          <div class="flex">
-            <h3 class="text-2xl text-slate-500 mx-auto">目前尚未有商品，請稍後再重新查看</h3>
+          <div class="flex flex-col items-center justify-center py-20 gap-4">
+            <img :src="empty" class="w-64 opacity-80" />
+            <p class="text-slate-400 text-lg">目前尚未有商品</p>
+            <p class="text-slate-300 text-sm">請稍後再重新查看</p>
           </div>
         </section>
         <!-- 顯示在網頁上的商品卡片 -->
@@ -277,7 +279,7 @@ const handleConfirmCheckout = () => {
           <div class="flex-1 p-6 flex flex-col gap-4">
             <div class="flex items-center gap-3 flex-wrap">
               <h2 class="text-2xl font-bold text-slate-800">{{ currentProduct.title }}</h2>
-              <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full">
+              <span class="text-xs bg-slate-0 text-slate-500 px-3 py-1 rounded-full">
                 {{ currentProduct.category }}
               </span>
             </div>
