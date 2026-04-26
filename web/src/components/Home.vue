@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useUserStore, useProductStore, useCartStore, useOrderStore } from '@/store'
-import { useDialog, useMessage, NCard, NButton, NModal, NBadge } from 'naive-ui'
+import { useDialog, useMessage, NCard, NButton, NModal, NBadge, NInput } from 'naive-ui'
 import { empty } from '@/assets'
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
@@ -105,6 +105,26 @@ const handleConfirmCheckout = () => {
   cartStore.closeCheckoutModal()
   message.success(`本次購物共購買了 ${itemCount} 樣商品`)
 }
+
+// 搜尋關鍵字
+const searchKeyword = ref('')
+// 目前選擇的類別 null 代表全部
+const selectedCategory = ref(null)
+
+const filteredProducts = computed(() => {
+  return productStore.products
+    .filter((p) => p.isActive) // 只顯示上架商品
+    .filter((p) => {
+      // 搜尋篩選：商品名稱包含關鍵字
+      if (!searchKeyword.value) return true
+      return p.title.includes(searchKeyword.value)
+    })
+    .filter((p) => {
+      // 類別篩選：選了類別才篩選
+      if (!selectedCategory.value) return true
+      return p.category === selectedCategory.value
+    })
+})
 </script>
 
 <template>
@@ -169,7 +189,9 @@ const handleConfirmCheckout = () => {
         <div class="container mb-2 px-4 mx-auto h-16 flex justify-between items-center">
           <p>登入成功，歡迎{{ userStore.account }}</p>
           <div class="flex gap-2 items-center">
-            <n-button type="error" @click="userStore.logOut">登出</n-button>
+            <n-button class="logout-btn" type="error" ghost @click="userStore.logOut"
+              >登出</n-button
+            >
             <n-button
               v-if="userStore.isAdmin"
               type="primary"
@@ -189,12 +211,41 @@ const handleConfirmCheckout = () => {
         <section class="mb-10">
           <HomeBanner />
         </section>
+        <!-- 搜尋和篩選 -->
+        <div class="flex flex-col gap-4 mb-6">
+          <n-input
+            v-model:value="searchKeyword"
+            placeholder="🔍請輸入您想搜尋的商品名稱"
+            clearable
+            class="max-w-md"
+          >
+          </n-input>
 
-        <section v-if="productStore.products.filter((p) => p.isActive).length === 0" class="w-full">
+          <!-- 類別篩選 -->
+          <div class="flex gap-2 flex-wrap">
+            <n-button
+              size="small"
+              :type="selectedCategory === null ? 'primary' : 'default'"
+              @click="selectedCategory = null"
+              >全部</n-button
+            >
+
+            <!-- 每個類別 -->
+            <n-button
+              v-for="category in productStore.categories"
+              :key="category.value"
+              size="small"
+              :type="selectedCategory === category.value ? 'primary' : 'default'"
+              @click="selectedCategory = category.value"
+              >{{ category.label }}</n-button
+            >
+          </div>
+        </div>
+        <section v-if="filteredProducts.length === 0">
           <div class="flex flex-col items-center justify-center py-20 gap-4">
             <img :src="empty" class="w-64 opacity-80" />
-            <p class="text-slate-400 text-lg">目前尚未有商品</p>
-            <p class="text-slate-300 text-sm">請稍後再重新查看</p>
+            <p class="text-slate-400 text-lg">找不到符合的商品</p>
+            <p class="text-slate-300 text-sm">試試其他關鍵字或類別</p>
           </div>
         </section>
         <!-- 顯示在網頁上的商品卡片 -->
@@ -202,11 +253,7 @@ const handleConfirmCheckout = () => {
           v-else
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-4"
         >
-          <div
-            v-for="item in productStore.products.filter((p) => p.isActive)"
-            :key="item.id"
-            class="group"
-          >
+          <div v-for="item in filteredProducts" :key="item.id" class="group">
             <n-card
               content-style="padding: 0;"
               class="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
@@ -374,5 +421,11 @@ const handleConfirmCheckout = () => {
 } */
 .n-card {
   max-width: 320px;
+}
+
+/* hover 時變成實心紅色按鈕 */
+.logout-btn:hover {
+  background-color: #ef4444 !important;
+  color: white !important;
 }
 </style>

@@ -112,8 +112,8 @@ const leftPanel = computed(() => {
   <div class="min-h-screen bg-slate-100 flex justify-center items-center">
     <!-- 置中大區塊 -->
     <div
-      class="flex w-full lg:w-[50vw] lg:h-[50vh] min-w-[800px] min-h-[500px] bg-white rounded-2xl shadow-xl overflow-hidden"
-    >
+  class="flex w-full lg:w-[60vw] lg:h-[70vh] min-w-[800px] min-h-[580px] bg-white rounded-2xl shadow-xl overflow-hidden"
+>
       <!-- 左邊區塊 -->
       <div class="hidden lg:flex lg:w-1/2 flex-col p-12 justify-between bg-navy text-white">
         <Transition
@@ -127,7 +127,7 @@ const leftPanel = computed(() => {
         >
           <div :key="isRegistered" class="flex flex-col justify-between h-full">
             <h1 class="text-2xl font-bold tracking-wider">{{ leftPanel.title }}</h1>
-            <img :src="leftPanel.img" class="object-cover" />
+            <img :src="leftPanel.img" class="w-full min-w-52 min-h-52 object-contain mx-auto" />
             <div class="">
               <p class="text-2xl font-bold tracking-[0.25em] leading-[1.5]">
                 {{ leftPanel.heading }}
