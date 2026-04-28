@@ -5,11 +5,23 @@ import {
   HomeOutline as Home,
 } from '@vicons/ionicons5'
 import { NIcon, NMenu, NLayoutContent, NLayout, NLayoutSider } from 'naive-ui'
-import { h, ref } from 'vue'
+import { h, ref, computed } from 'vue'
 import { Edit } from '@vicons/tabler'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
+
+// 以目前路由的名稱到對應選單的Key
+const activeKey = computed(() => {
+  const routeToKeyMap = {
+    Home: 'home',
+    UserProfile: 'editpersonalInfo',
+    MyStore: 'MyStore',
+  }
+  return routeToKeyMap[route.name] || null
+})
+
 const handleMenuSelect = (key) => {
   // 對照表:用來對應每個key的router name
   const routeMap = {
@@ -63,7 +75,12 @@ const inverted = ref(false)
         show-trigger
         :inverted="inverted"
       >
-        <n-menu :inverted="inverted" :options="menuOptions" @update:value="handleMenuSelect" />
+        <n-menu
+          :inverted="inverted"
+          :options="menuOptions"
+          :value="activeKey"
+          @update:value="handleMenuSelect"
+        />
       </n-layout-sider>
 
       <n-layout-content content-style="padding: 24px;" :native-scrollbar="false" scrollable>
