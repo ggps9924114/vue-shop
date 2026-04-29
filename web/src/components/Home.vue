@@ -1,7 +1,16 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useUserStore, useProductStore, useCartStore, useOrderStore } from '@/store'
-import { useDialog, useMessage, NCard, NButton, NModal, NBadge, NInput } from 'naive-ui'
+import {
+  useDialog,
+  useMessage,
+  NCard,
+  NButton,
+  NModal,
+  NBadge,
+  NInput,
+  NPagination,
+} from 'naive-ui'
 import { empty } from '@/assets'
 import HomeBanner from './HomeBanner.vue'
 import SideMenu from './SideMenu.vue'
@@ -108,9 +117,11 @@ const handleConfirmCheckout = () => {
 
 // 搜尋關鍵字
 const searchKeyword = ref('')
+
 // 目前選擇的類別 null 代表全部
 const selectedCategory = ref(null)
 
+// 篩選後的商品清單
 const filteredProducts = computed(() => {
   return productStore.products
     .filter((p) => p.isActive) // 只顯示上架商品
@@ -124,6 +135,26 @@ const filteredProducts = computed(() => {
       if (!selectedCategory.value) return true
       return p.category === selectedCategory.value
     })
+})
+
+// 目前頁碼從 1 開始
+const currentPage = ref(1)
+
+// 每頁顯示商品數量
+const pageSize = ref(8)
+
+// 計算頁總數
+const totalProducts = computed(() => filteredProducts.value.length)
+
+const pagedProducts = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return filteredProducts.value.slice(start, end)
+})
+
+// 搜尋或篩選改變時，自動回到第一頁
+watch([searchKeyword, selectedCategory], () => {
+  currentPage.value = 1
 })
 </script>
 
@@ -249,11 +280,8 @@ const filteredProducts = computed(() => {
           </div>
         </section>
         <!-- 顯示在網頁上的商品卡片 -->
-        <div
-          v-else
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-4"
-        >
-          <div v-for="item in filteredProducts" :key="item.id" class="group">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+          <div v-for="item in pagedProducts" :key="item.id" class="group">
             <n-card
               content-style="padding: 0;"
               class="overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
@@ -303,6 +331,14 @@ const filteredProducts = computed(() => {
               </div>
             </n-card>
           </div>
+        </div>
+        <!-- 分頁元件 -->
+        <div v-if="totalProducts > pageSize" class="flex justify-center mt-8">
+          <n-pagination
+            v-model:page="currentPage"
+            :page-count="Math.ceil(totalProducts / pageSize)"
+            :page-slot="5"
+          />
         </div>
       </main>
     </div>
