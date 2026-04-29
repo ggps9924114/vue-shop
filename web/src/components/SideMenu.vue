@@ -82,7 +82,7 @@ const inverted = ref(false)
             class="w-10 h-10  object-cover flex-shrink-0"
           />
           <!-- 文字區塊：側邊欄 -->
-          <div class="overflow-hidden flex flex-col justify-center items-start">
+          <div class="overflow-hidden">
             <p class="font-bold text-lg tracking-[22px] text-[#7e6031] whitespace-nowrap">塊點下單</p>
             <p class="text-xs text-slate-[#7e6031] opacity-60 whitespace-nowrap">HERRY SHOPPING NOW</p>
           </div>
