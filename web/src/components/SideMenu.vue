@@ -63,6 +63,14 @@ const menuOptions = [
 ]
 
 const inverted = ref(false)
+
+// 判斷是否為手機尺寸
+const isMobile = ref(window.innerWidth < 768)
+window.addEventListener('resize', () => {
+  isMobile.value = window.innerWidth < 768
+})
+// 手機預設收合，電腦預設展開
+const collapsed = ref(isMobile.value)
 </script>
 <template>
   <div class="h-screen flex flex-col">
@@ -74,17 +82,18 @@ const inverted = ref(false)
         :width="240"
         show-trigger
         :inverted="inverted"
+        v-model:collapsed="collapsed"
       >
         <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-100">
- 
-          <img
-            src="/src/assets/logo.png"
-            class="w-10 h-10  object-cover flex-shrink-0"
-          />
+          <img src="/src/assets/logo.png" class="w-10 h-10 object-cover flex-shrink-0" />
           <!-- 文字區塊：側邊欄 -->
           <div class="overflow-hidden">
-            <p class="font-bold text-lg tracking-[22px] text-[#7e6031] whitespace-nowrap">塊點下單</p>
-            <p class="text-xs text-slate-[#7e6031] opacity-60 whitespace-nowrap">HERRY SHOPPING NOW</p>
+            <p class="font-bold text-lg tracking-[22px] text-[#7e6031] whitespace-nowrap">
+              塊點下單
+            </p>
+            <p class="text-xs text-slate-[#7e6031] opacity-60 whitespace-nowrap">
+              HERRY SHOPPING NOW
+            </p>
           </div>
         </div>
         <n-menu

@@ -109,11 +109,11 @@ const leftPanel = computed(() => {
 </script>
 <template>
   <!-- 登入外框背景 -->
-  <div class="min-h-screen bg-slate-100 flex justify-center items-center">
+  <div class="min-h-screen bg-slate-100 flex lg:justify-center lg:items-center">
     <!-- 置中大區塊 -->
     <div
-  class="flex w-full lg:w-[60vw] lg:h-[70vh] min-w-[800px] min-h-[580px] bg-white rounded-2xl shadow-xl overflow-hidden"
->
+      class="flex w-full h-screen lg:h-auto lg:w-[60vw] lg:max-h-[70vh] lg:min-h-[580px] bg-white lg:rounded-2xl lg:shadow-xl overflow-hidden"
+    >
       <!-- 左邊區塊 -->
       <div class="hidden lg:flex lg:w-1/2 flex-col p-12 justify-between bg-navy text-white">
         <Transition
@@ -138,7 +138,19 @@ const leftPanel = computed(() => {
         </Transition>
       </div>
       <!-- 右邊區塊 -->
-      <div class="flex flex-col justify-center w-full lg:w-1/2 p-10 bg-white">
+      <div class="flex flex-col justify-center w-full lg:w-1/2 px-6 py-10 lg:p-10 bg-white">
+        <!-- 謹手機尺寸會看到LOGO -->
+        <div class="lg:hidden flex items-center justify-center gap-3 mb-8">
+          <img src="@/assets/logo.png" class="h-14 w-14 object-contain flex-shrink-0" />
+          <div class="flex flex-col">
+            <p class="font-bold text-lg tracking-[8px] text-[#7e6031] whitespace-nowrap">
+              塊點下單
+            </p>
+            <p class="text-xs text-[#7e6031] opacity-60 whitespace-nowrap tracking-widest">
+              HERRY SHOPPING NOW
+            </p>
+          </div>
+        </div>
         <div class="w-full max-w-[380px] mx-auto">
           <!-- 表單動畫過渡 -->
           <Transition

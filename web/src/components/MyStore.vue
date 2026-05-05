@@ -4,7 +4,8 @@ import { useDialog, useMessage, NButton } from 'naive-ui'
 import SideMenu from './SideMenu.vue'
 import ProductModal from './ProductModal.vue'
 import { computed } from 'vue'
-
+import { CreateOutline, TrashOutline, EyeOutline, EyeOffOutline } from '@vicons/ionicons5'
+import { NIcon } from 'naive-ui'
 const userStore = useUserStore()
 const orderStore = useOrderStore()
 const productStore = useProductStore()
@@ -64,7 +65,7 @@ const inactiveProducts = computed(() => productStore.products.filter((p) => !p.i
         <!-- 商品數據  只有管理員看得到 -->
         <div v-if="userStore.isAdmin">
           <h2 class="text-2xl font-bold mb-6">我的賣場</h2>
-          <div class="grid grid-cols-4 gap-4">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white text-center p-5 rounded-md shadow-sm">
               <p class="text-2xl font-bold text-navy">{{ totalProducts }}</p>
               <p class="text-sm mt-2">商品總數</p>
@@ -78,7 +79,7 @@ const inactiveProducts = computed(() => productStore.products.filter((p) => !p.i
               <p class="text-sm text-slate-500 mt-2">已售完</p>
             </div>
             <div class="bg-white text-center p-5 rounded-md shadow-sm">
-              <p class="text-3xl font-bold text-green-600">$ {{ totalStockValue }}</p>
+              <p class="text-xl lg:text-3xl font-bold text-green-600">$ {{ totalStockValue }}</p>
               <p class="text-sm mt-2">庫存總價值</p>
             </div>
           </div>
@@ -95,47 +96,89 @@ const inactiveProducts = computed(() => productStore.products.filter((p) => !p.i
               哎呀！目前似乎沒有商品了呢！
             </div>
             <!-- 商品列表 -->
+            <!-- 商品列表 -->
             <div
               v-for="item in productStore.products"
               :key="item.id"
-              class="flex items-center gap-4 p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors"
+              class="flex flex-col gap-2 p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors"
             >
-              <img :src="item.imageUrl" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
-
-              <div class="flex-1 min-w-0">
-                <p class="font-bold truncate">{{ item.title }}</p>
-                <p class="text-xs text-slate-400">{{ item.category }} ‧ 庫存 {{ item.stock }} 件</p>
+              <!-- 第一行：圖 + 名稱類別 -->
+              <div class="flex items-center gap-3">
+                <img :src="item.imageUrl" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold truncate">{{ item.title }}</p>
+                  <p class="text-xs text-slate-400 truncate">
+                    {{ item.category }} ‧ 庫存 {{ item.stock }} 件
+                  </p>
+                </div>
               </div>
 
-              <p class="font-bold text-navy flex-shrink-0">$ {{ item.price }}</p>
-
-              <span
-                class="text-xs px-2 py-1 rounded-full flex-shrink-0"
-                :class="{
-                  'bg-green-50 text-green-600': item.isActive && item.stock > 0,
-                  'bg-slate-100 text-slate-400': item.isActive && item.stock === 0,
-                  'bg-orange-50 text-orange-500': !item.isActive,
-                }"
-              >
-                {{ !item.isActive ? '已下架' : item.stock > 0 ? '上架中' : '已售完' }}
-              </span>
-
-              <div class="flex gap-2 flex-shrink-0">
-                <n-button size="small" type="primary" ghost @click="productStore.editProduct(item)">
-                  編輯
-                </n-button>
-                <n-button
-                  size="small"
-                  :type="item.isActive ? 'warning' : 'success'"
-                  ghost
-                  @click="handleToggleActive(item)"
+              <!-- 第二行：價格 + 狀態 + 按鈕 -->
+              <div class="flex items-center gap-2 pl-15">
+                <p class="font-bold text-navy text-sm flex-shrink-0">$ {{ item.price }}</p>
+                <span
+                  class="hidden sm:inline text-xs px-2 py-1 rounded-full flex-shrink-0"
+                  :class="{
+                    'bg-green-50 text-green-600': item.isActive && item.stock > 0,
+                    'bg-slate-100 text-slate-400': item.isActive && item.stock === 0,
+                    'bg-orange-50 text-orange-500': !item.isActive,
+                  }"
                 >
-                  {{ item.isActive ? '下架' : '上架' }}</n-button
-                >
+                  {{ !item.isActive ? '已下架' : item.stock > 0 ? '上架中' : '已售完' }}
+                </span>
 
-                <n-button size="small" type="error" ghost @click="handleProductDel(item)">
-                  刪除
-                </n-button>
+                <div class="flex gap-2 ml-auto">
+                  <!-- 手機版以icon呈現 -->
+                  <div class="flex gap-2 sm:hidden">
+                    <n-button
+                      size="small"
+                      type="primary"
+                      ghost
+                      @click="productStore.editProduct(item)"
+                    >
+                      <template #icon
+                        ><n-icon><CreateOutline /></n-icon
+                      ></template>
+                    </n-button>
+                    <n-button
+                      size="small"
+                      :type="item.isActive ? 'warning' : 'success'"
+                      ghost
+                      @click="handleToggleActive(item)"
+                    >
+                      <template #icon
+                        ><n-icon><EyeOffOutline v-if="item.isActive" /><EyeOutline v-else /></n-icon
+                      ></template>
+                    </n-button>
+                    <n-button size="small" type="error" ghost @click="handleProductDel(item)">
+                      <template #icon
+                        ><n-icon><TrashOutline /></n-icon
+                      ></template>
+                    </n-button>
+                  </div>
+
+                  <!-- 網頁版以文字呈現 -->
+                  <div class="hidden sm:flex gap-2">
+                    <n-button
+                      size="small"
+                      type="primary"
+                      ghost
+                      @click="productStore.editProduct(item)"
+                      >編輯</n-button
+                    >
+                    <n-button
+                      size="small"
+                      :type="item.isActive ? 'warning' : 'success'"
+                      ghost
+                      @click="handleToggleActive(item)"
+                    >
+                      {{ item.isActive ? '下架' : '上架' }}
+                    </n-button>
+                    <n-button size="small" type="error" ghost @click="handleProductDel(item)"
+                      >刪除</n-button
+                    >
+                  </div>
+                </div>
               </div>
             </div>
           </div>

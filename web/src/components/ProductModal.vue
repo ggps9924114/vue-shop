@@ -72,7 +72,7 @@ const handleProductAddAndSave = () => {
 <template>
   <n-modal v-model:show="productStore.showAddProduct">
     <n-card
-      style="width: 600px"
+      style="width: 90vw; max-width: 600px"
       :bordered="false"
       size="huge"
       role="dialog"
@@ -135,7 +135,12 @@ const handleProductAddAndSave = () => {
         </n-form-item>
 
         <!-- 圖片預覽 Modal -->
-        <n-modal v-model:show="showImagePreview" preset="card" style="width: 600px" title="">
+        <n-modal
+          v-model:show="showImagePreview"
+          preset="card"
+          style="width: 90vw; max-width: 600px"
+          title=""
+        >
           <img :src="previewImageUrl" style="width: 100%" />
         </n-modal>
 

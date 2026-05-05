@@ -49,7 +49,7 @@ const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + or
           <!-- 🆕 數據統計卡片 -->
           <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="text-xl font-bold text-slate-800 mb-2">訂單統計</h3>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div class="bg-slate-50 rounded-xl p-4 text-center">
                 <p class="text-2xl font-bold text-navy">{{ totalOrders }}</p>
                 <p class="text-xs text-slate-400 mt-1">累計訂單</p>
@@ -68,7 +68,7 @@ const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + or
           <!-- 快速連結 -->
           <div class="bg-white rounded-2xl shadow-sm p-6">
             <h3 class="text-xl font-bold text-slate-800 mb-2">快速連結</h3>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3 sm:flex sm:flex-col">
               <!-- 前往我的訂單 -->
               <div
                 class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors"

@@ -1,6 +1,7 @@
 <script setup>
 import { useCartStore } from '@/store'
-import { NDrawer, NDrawerContent, NEmpty, NButton, useMessage, useDialog } from 'naive-ui'
+import { NDrawer, NDrawerContent, NButton, useMessage, useDialog } from 'naive-ui'
+import { ref } from 'vue'
 import { empty_cart } from '@/assets'
 // defineProps 和 defineEmits 在 script setup 裡不需要 import，直接用
 const message = useMessage()
@@ -38,6 +39,13 @@ const headleRemoveFromCart = (item) => {
     },
   })
 }
+
+// 是否為手機尺寸
+const isMobile = ref(window.innerWidth < 768)
+
+window.addEventListener('resize', () => {
+  isMobile.value = window.innerWidth < 768
+})
 </script>
 
 <template>
@@ -45,7 +53,7 @@ const headleRemoveFromCart = (item) => {
   <!-- placement 是純字串，不需要冒號 -->
   <n-drawer
     :show="modelValue"
-    :width="400"
+    :width="isMobile ? '100%' : 400"
     placement="right"
     @update:show="emit('update:modelValue', $event)"
   >

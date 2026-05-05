@@ -218,20 +218,22 @@ watch([searchKeyword, selectedCategory], () => {
       <!-- nav跟div意思一樣 , 但nav讓無障礙可以讀出 -->
       <nav class="bg-white shadow-sm mb-8">
         <div class="container mb-2 px-4 mx-auto h-16 flex justify-between items-center">
-          <p>登入成功，歡迎{{ userStore.account }}</p>
+          <p class="hidden sm:block text-sm text-slate-600">
+            登入成功，歡迎{{ userStore.account }}
+          </p>
           <div class="flex gap-2 items-center">
-            <n-button class="logout-btn" type="error" ghost @click="userStore.logOut"
+            <n-button class="logout-btn" type="error" ghost size="small" @click="userStore.logOut"
               >登出</n-button
             >
             <n-button
               v-if="userStore.isAdmin"
               type="primary"
-              size="medium"
+              size="small"
               @click.prevent="productStore.openAddModal"
               >新增商品</n-button
             >
             <n-badge :value="cartStore.totalQuantity" :max="99">
-              <n-button type="primary" size="medium" @click="showCart = true">購物車</n-button>
+              <n-button type="primary" size="small" @click="showCart = true">購物車</n-button>
             </n-badge>
           </div>
         </div>
@@ -345,16 +347,16 @@ watch([searchKeyword, selectedCategory], () => {
     <!-- 點擊後的商品詳情內容 -->
     <n-modal v-model:show="showProductDetail">
       <n-card
-        style="width: 90vw; max-width: 680px; max-width: 1000px"
+        style="width: 90vw; max-width: 1000px"
         :bordered="false"
         role="dialog"
         aria-modal="true"
         class="rounded-2xl shadow-xl overflow-hidden"
         content-style="padding: 0;"
       >
-        <div v-if="currentProduct" class="flex">
+        <div v-if="currentProduct" class="flex flex-col md:flex-row">
           <!-- 左商品圖片 -->
-          <div class="w-2/5 min-h-[400px] flex-shrink-0 overflow-hidden">
+          <div class="w-full md:w-2/5 h-64 md:min-h-[420px] flex-shrink-0 overflow-hidden">
             <img :src="currentProduct.imageUrl" class="w-full h-full object-cover" />
           </div>
 
@@ -362,7 +364,7 @@ watch([searchKeyword, selectedCategory], () => {
           <div class="flex-1 p-6 flex flex-col gap-4">
             <div class="flex items-center gap-3 flex-wrap">
               <h2 class="text-2xl font-bold text-slate-800">{{ currentProduct.title }}</h2>
-              <span class="text-xs bg-slate-0 text-slate-500 px-3 py-1 rounded-full">
+              <span class="text-xs bg-slate-200 text-slate-500 px-3 py-1 rounded-full">
                 {{ currentProduct.category }}
               </span>
             </div>
@@ -373,9 +375,9 @@ watch([searchKeyword, selectedCategory], () => {
             <hr class="border-slate-100" />
 
             <!-- 服務保障區塊 -->
-            <div class="flex flex-col-3 gap-2 py-2">
+            <div class="flex flex-col sm:flex-row gap-2 py-2">
               <div
-                class="flex w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
+                class="flex sm:w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
               >
                 <span class="text-xl flex-shrink-0">🚚</span>
                 <div>
@@ -384,7 +386,7 @@ watch([searchKeyword, selectedCategory], () => {
                 </div>
               </div>
               <div
-                class="flex w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
+                class="flex sm:w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
               >
                 <span class="text-xl flex-shrink-0">↩️</span>
                 <div>
@@ -394,7 +396,7 @@ watch([searchKeyword, selectedCategory], () => {
               </div>
 
               <div
-                class="flex w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
+                class="flex sm:w-1/3 justify-center items-center gap-3 p-2 bg-slate-50 border-navy/40 border-[1px] rounded-xl"
               >
                 <span class="text-xl flex-shrink-0">🔒</span>
                 <div>
