@@ -61,6 +61,11 @@ const menuOptions = [
     icon: renderIcon(Store),
   },
 ]
+const tabOptions = [
+  { label: '首頁', key: 'home', icon: Home, routeName: 'Home' },
+  { label: '訂單資訊', key: 'editPersonalInfo', icon: Edit, routeName: 'UserProfile' },
+  { label: '我的賣場', key: 'MyStore', icon: Store, routeName: 'MyStore' },
+]
 
 const inverted = ref(false)
 
@@ -73,7 +78,7 @@ window.addEventListener('resize', () => {
 const collapsed = ref(isMobile.value)
 </script>
 <template>
-  <div class="h-screen flex flex-col">
+  <div v-if="!isMobile" class="h-screen flex flex-col">
     <n-layout has-sider class="flex-1">
       <n-layout-sider
         bordered
@@ -108,6 +113,29 @@ const collapsed = ref(isMobile.value)
         <slot></slot>
       </n-layout-content>
     </n-layout>
+  </div>
+
+  <!-- 手機版底部 Tab 導覽列 -->
+  <div v-else class="flex flex-col h-screen">
+    <div class="flex-1 overflow-y-auto pb-16">
+      <slot></slot>
+    </div>
+
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50">
+      <div class="flex justify-around items-center h-16">
+        <button
+          v-for="tab in tabOptions"
+          :key="tab.key"
+          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors"
+          :class="activeKey === tab.key ? 'text-blue-500' : 'text-slate-400'"
+          @click="router.push({ name: tab.routeName })"
+        >
+          <n-icon :size="22" :component="tab.icon" />
+          <span class="text-xs">{{ tab.label }}</span>
+        </button>
+      </div>
+    </nav>
   </div>
 </template>
 
