@@ -282,7 +282,10 @@ watch([searchKeyword, selectedCategory], () => {
           </div>
         </section>
         <!-- 顯示在網頁上的商品卡片 -->
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+        <div
+          v-else
+          class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 p-2 sm:p-4"
+        >
           <div v-for="item in pagedProducts" :key="item.id" class="group">
             <n-card
               content-style="padding: 0;"

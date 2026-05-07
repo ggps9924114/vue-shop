@@ -47,21 +47,18 @@ const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + or
           </div>
 
           <!-- 🆕 數據統計卡片 -->
-          <div class="bg-white rounded-2xl shadow-sm p-6">
-            <h3 class="text-xl font-bold text-slate-800 mb-2">訂單統計</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="bg-slate-50 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold text-navy">{{ totalOrders }}</p>
-                <p class="text-xs text-slate-400 mt-1">累計訂單</p>
-              </div>
-              <div class="bg-slate-50 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold text-navy">$ {{ totalSpent }}</p>
-                <p class="text-xs text-slate-400 mt-1">累計消費</p>
-              </div>
-              <div class="bg-slate-50 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold text-navy">{{ cartStore.totalQuantity }}</p>
-                <p class="text-xs text-slate-400 mt-1">購物車商品</p>
-              </div>
+          <div class="grid grid-cols-3 gap-3 bg-white p-4 rounded-xl">
+            <div class="bg-slate-50 rounded-xl p-4 text-center">
+              <p class="text-xl sm:text-2xl font-bold text-navy">{{ totalOrders }}</p>
+              <p class="text-xs text-slate-400 mt-1">累計訂單</p>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 text-center">
+              <p class="text-md mb-3 sm:text-2xl font-bold text-navy break-all">$ {{ totalSpent }}</p>
+              <p class="text-xs text-slate-400 mt-1">累計消費</p>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 text-center">
+              <p class="text-xl sm:text-2xl font-bold text-navy">{{ cartStore.totalQuantity }}</p>
+              <p class="text-xs text-slate-400 mt-1">購物車商品</p>
             </div>
           </div>
 

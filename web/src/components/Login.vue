@@ -165,7 +165,7 @@ const leftPanel = computed(() => {
             <!-- 登入畫面 -->
             <n-form :model="formData" v-if="!isRegistered" @submit.prevent="login">
               <div class="mb-8">
-                <h2 class="text-3xl font-bold text-slate-800">登入</h2>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">登入</h2>
                 <p class="mt-2 text-slate-400">請輸入帳號密碼，還沒有帳號請先進行註冊</p>
               </div>
               <n-form-item label="帳號：" path="account" :rule="rule">
@@ -190,7 +190,7 @@ const leftPanel = computed(() => {
             <!-- 註冊畫面 -->
             <n-form :model="formData" v-else @submit.prevent="handleSignup">
               <div class="mb-8">
-                <h2 class="text-3xl font-bold text-slate-800">註冊</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">註冊</h2>
                 <p class="mt-2 text-slate-400">如果你已經有帳號，請返回直接登入吧！</p>
               </div>
               <n-form-item label="帳號：" path="account" :rule="rule">

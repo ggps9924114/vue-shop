@@ -96,14 +96,13 @@ const inactiveProducts = computed(() => productStore.products.filter((p) => !p.i
               哎呀！目前似乎沒有商品了呢！
             </div>
             <!-- 商品列表 -->
-            <!-- 商品列表 -->
             <div
               v-for="item in productStore.products"
               :key="item.id"
-              class="flex flex-col gap-2 p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors"
+              class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors"
             >
-              <!-- 第一行：圖 + 名稱類別 -->
-              <div class="flex items-center gap-3">
+              <!-- 第一區塊：圖片 + 名稱（固定佔左邊） -->
+              <div class="flex items-center gap-3 flex-1 min-w-0">
                 <img :src="item.imageUrl" class="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
                 <div class="flex-1 min-w-0">
                   <p class="font-bold truncate">{{ item.title }}</p>
@@ -114,7 +113,7 @@ const inactiveProducts = computed(() => productStore.products.filter((p) => !p.i
               </div>
 
               <!-- 第二行：價格 + 狀態 + 按鈕 -->
-              <div class="flex items-center gap-2 pl-15">
+              <div class="flex items-center gap-2 pl-15 sm:pl-0">
                 <p class="font-bold text-navy text-sm flex-shrink-0">$ {{ item.price }}</p>
                 <span
                   class="hidden sm:inline text-xs px-2 py-1 rounded-full flex-shrink-0"

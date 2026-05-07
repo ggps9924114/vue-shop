@@ -1,7 +1,7 @@
 <script setup>
 import { useCartStore } from '@/store'
 import { NDrawer, NDrawerContent, NButton, useMessage, useDialog } from 'naive-ui'
-import { ref } from 'vue'
+import { ref} from 'vue'
 import { empty_cart } from '@/assets'
 // defineProps 和 defineEmits 在 script setup 裡不需要 import，直接用
 const message = useMessage()
@@ -46,6 +46,8 @@ const isMobile = ref(window.innerWidth < 768)
 window.addEventListener('resize', () => {
   isMobile.value = window.innerWidth < 768
 })
+
+
 </script>
 
 <template>
