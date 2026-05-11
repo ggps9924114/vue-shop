@@ -3,12 +3,13 @@ import { useUserStore, useOrderStore, useCartStore } from '@/store'
 import SideMenu from './SideMenu.vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { NButton } from 'naive-ui'
-
+import { NButton, NInput, NFormItem, NModal, useMessage } from 'naive-ui'
+import { ref } from 'vue'
 const orderStore = useOrderStore()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const router = useRouter()
+const message = useMessage()
 
 // 取得該帳號所有訂單
 const myOrders = computed(() => orderStore.getOrdersByAccount(userStore.account))
@@ -18,6 +19,38 @@ const totalOrders = computed(() => myOrders.value.length)
 
 // 累計消費金額
 const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + order.totalPrice, 0))
+
+// 修改密碼表單
+const pwdForm = ref({ oldPwd: '', newPwd: '', confirmPwd: '' })
+// 修改密碼 Modal 的開關
+const showPwdModal = ref(false)
+
+const handleChangePassword = () => {
+  //  確認所有欄位都有寫
+  if (!pwdForm.value.oldPwd || !pwdForm.value.newPwd || !pwdForm.value.confirmPwd) {
+    message.error('請確認所有欄位是否都有填寫')
+    return
+  }
+  // 新密碼與確認密碼一致
+  if (pwdForm.value.newPwd !== pwdForm.value.confirmPwd) {
+    message.error('新密碼與確認密碼輸入不一致')
+    return
+  }
+  // 新密碼與舊密碼不能一樣
+  if (pwdForm.value.oldPwd === pwdForm.value.newPwd) {
+    message.error('新密碼與舊密碼不能輸入相同的密碼')
+    return
+  }
+
+  const result = userStore.changePassword(pwdForm.value.oldPwd, pwdForm.value.newPwd)
+  if (result.success) {
+    message.success(result.message)
+    pwdForm.value = { oldPwd: '', newPwd: '', confirmPwd: '' }
+    showPwdModal.value = false
+  } else {
+    message.error(result.message)
+  }
+}
 </script>
 
 <template>
@@ -43,6 +76,9 @@ const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + or
                   {{ userStore.isAdmin ? '管理員' : '一般用戶' }}
                 </span>
               </div>
+              <n-button class="ml-auto" size="small" @click="showPwdModal = true"
+                >修改密碼</n-button
+              >
             </div>
           </div>
 
@@ -53,7 +89,9 @@ const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + or
               <p class="text-xs text-slate-400 mt-1">累計訂單</p>
             </div>
             <div class="bg-slate-50 rounded-xl p-4 text-center">
-              <p class="text-md mb-3 sm:text-2xl font-bold text-navy break-all">$ {{ totalSpent }}</p>
+              <p class="text-md mb-3 sm:text-2xl font-bold text-navy break-all">
+                $ {{ totalSpent }}
+              </p>
               <p class="text-xs text-slate-400 mt-1">累計消費</p>
             </div>
             <div class="bg-slate-50 rounded-xl p-4 text-center">
@@ -141,6 +179,51 @@ const totalSpent = computed(() => myOrders.value.reduce((sum, order) => sum + or
         </div>
       </div>
     </div>
+    <!-- 修改密碼 Modal -->
+    <n-modal
+      v-model:show="showPwdModal"
+      preset="card"
+      title="修改密碼"
+      style="width: min(520px, 90vw)"
+      class="rounded-2xl"
+    >
+      <div class="flex flex-col gap-3">
+        <n-form-item label="舊密碼" :show-feedback="false" label-placement="left">
+          <n-input
+            v-model:value="pwdForm.oldPwd"
+            type="password"
+            show-password-on="mousedown"
+            placeholder="請輸入目前的密碼"
+          />
+        </n-form-item>
+
+        <n-form-item label="新密碼" :show-feedback="false" label-placement="left">
+          <n-input
+            v-model:value="pwdForm.newPwd"
+            type="password"
+            show-password-on="mousedown"
+            placeholder="請輸入新密碼"
+          />
+        </n-form-item>
+
+        <n-form-item label="確認新密碼" :show-feedback="false" label-placement="left">
+          <n-input
+            v-model:value="pwdForm.confirmPwd"
+            type="password"
+            show-password-on="mousedown"
+            placeholder="請再輸入一次新密碼"
+          />
+        </n-form-item>
+      </div>
+
+      <!-- Modal 底部按鈕 -->
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <n-button @click="showPwdModal = false">取消</n-button>
+          <n-button type="primary" @click="handleChangePassword">確認修改</n-button>
+        </div>
+      </template>
+    </n-modal>
   </SideMenu>
 </template>
 

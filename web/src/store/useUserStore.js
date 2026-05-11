@@ -43,12 +43,30 @@ export const useUserStore = defineStore(
       isAdmin.value = name === 'admin'
     }
 
+    // 修改密碼
+    const changePassword = (oldPwd, newPwd) => {
+      // 從 localStorage 拿到所有帳號資料
+      const userList = JSON.parse(localStorage.getItem('registeredUser')) || []
+      // 找目前登入帳號
+      const targerUser = userList.find((u) => u.acc === account.value)
+      // 比對原本密碼如果錯誤直接回傳
+      if (!targerUser || targerUser.pwd !== oldPwd) {
+        return { success: false, message: '舊密碼輸入錯誤' }
+      }
+      targerUser.pwd = newPwd
+      // 改完密碼存回 localStorage
+      localStorage.setItem('registeredUser', JSON.stringify(userList))
+
+      return { success: true, message: '密碼修改成功' }
+    }
+
     return {
       isAdmin,
       isLogin,
       account,
       logOut,
       setLoginSuccess,
+      changePassword,
     }
   },
   { persist: true }, //這樣檔案就可以持久化保存,
