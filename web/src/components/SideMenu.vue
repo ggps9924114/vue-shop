@@ -89,7 +89,10 @@ const collapsed = ref(isMobile.value)
         :inverted="inverted"
         v-model:collapsed="collapsed"
       >
-        <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-100">
+        <div
+          class="flex items-center gap-3 px-4 py-4 border-b border-slate-100 cursor-pointer"
+          @click="router.push({ name: 'Home' })"
+        >
           <img src="/src/assets/logo.png" class="w-10 h-10 object-cover flex-shrink-0" />
           <!-- 文字區塊：側邊欄 -->
           <div class="overflow-hidden">
@@ -120,7 +123,6 @@ const collapsed = ref(isMobile.value)
     <div class="flex-1 overflow-y-auto pb-16">
       <slot></slot>
     </div>
-
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50">
       <div class="flex justify-around items-center h-16">
